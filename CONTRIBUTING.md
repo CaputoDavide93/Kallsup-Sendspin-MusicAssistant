@@ -14,7 +14,7 @@ Open an issue for anything beyond a fix, so we can agree on the shape first.
 
 ```bash
 cp firmware/secrets.yaml.example firmware/secrets.yaml
-sed -i "s|CHANGE_ME_KEY|$(openssl rand -base64 32)|" firmware/secrets.yaml
+sed -i.bak "s|CHANGE_ME_KEY|$(openssl rand -base64 32)|" firmware/secrets.yaml && rm firmware/secrets.yaml.bak
 pip install esphome
 esphome config firmware/kallsup-sendspin.yaml
 ```
@@ -23,7 +23,7 @@ Keep SendspinZero as a pinned remote package; do not copy its YAML in. Bumping `
 
 ## Working on the diagrams and icon
 
-`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_brand.py` draws `brand/icon.png`. Edit the script, run it, commit the result; never edit the output by hand. CI runs `python3 tools/gen_diagram.py --check`.
+`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_brand.py` draws `brand/icon.png` (needs `pip install pillow`). Edit the script, run it, commit the result; never edit the output by hand. CI runs `python3 tools/gen_diagram.py --check`.
 
 ## Style
 

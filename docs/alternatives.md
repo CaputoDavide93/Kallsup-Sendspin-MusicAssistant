@@ -6,12 +6,12 @@ This build gives up Bluetooth to keep the soldering simple. These are the routes
 |---|---|---|---|---|
 | **A. PCM5102 into the stock amplifier** | Bluetooth, battery, buttons, stock amplifier | Nothing | 3, one of them a small 0603 pad | PCM5102 DAC, a resistor and a capacitor |
 | **B. Relays switch the speaker** | Bluetooth, battery, buttons | Playing both at once | 2 large pads plus the speaker pads | Two 3 V relays, cables |
-| **C. This repository** | Battery, charging, buttons | Bluetooth | 3 large pads | Optional TPS63020 |
+| **C. This repository** | Battery, charging, buttons | Bluetooth | 3 (2 large test pads, plus the switched point from check 1 🔍) | Optional TPS63020 |
 | **D. USB-powered only** | Case and speaker | Bluetooth, battery playback | 2 large pads (`VCC_5V`, `GND1`) | None |
 
 ## A. PCM5102 into the stock amplifier
 
-The ESP32-S3 has no analogue output, so a DAC turns its I2S into line-level audio, which is fed into the ANT8817S's input alongside the JL7016C8's. The amplifier's input then acts as a mixer: Bluetooth and Wi-Fi both play, and nothing needs switching.
+The ESP32-S3 has no analogue output, so a DAC turns its I2S into line-level audio, which is fed into the ANT8817S's input alongside the JL7016C8's. The amplifier's input would then act as a mixer: Bluetooth and Wi-Fi both play, and nothing needs switching.
 
 What it needs first:
 
@@ -24,7 +24,7 @@ The only fiddly part is one wire on a 0603 pad, about 0.8 mm.
 
 ## B. Relays switch the speaker
 
-A MAX98357A drives the speaker for Wi-Fi, the stock amplifier drives it for Bluetooth, and relays choose between them. Both amplifiers are bridge-tied, so **both** speaker wires must switch: two single-pole relays on one ESP32 pin, or one double-pole relay.
+A MAX98357A drives the speaker for Wi-Fi, the stock amplifier drives it for Bluetooth, and relays choose between them. Both amplifiers are bridge-tied, so **both** speaker wires must switch: two single-pole relays on one ESP32 pin, or one double-pole relay, driven through a transistor or a relay module with its own driver.
 
 - Stock `P2` to the normally-closed contacts, so with the ESP32 off the speaker behaves as stock.
 - MAX98357A to the normally-open contacts.

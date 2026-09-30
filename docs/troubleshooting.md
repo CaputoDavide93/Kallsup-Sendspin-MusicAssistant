@@ -11,7 +11,7 @@
 
 Its `5V` pad needs at least 3.7 V, and the cell goes down to about 3.0 V. Add a 3.3 V buck-boost module feeding the `3V3` pin instead of `5V`: [Hardware](hardware.md#tps63020-33-v-buck-boost-module-optional).
 
-## The speaker switches itself off on battery
+## The speaker switches itself off on battery 🔍
 
 If the stock board powers down when it thinks nobody is listening, it takes the ESP32 with it. Check 2 in the [Build guide](build-guide.md#check-2-does-it-switch-itself-off-on-battery-) measures how long it waits. Option D in [Alternatives](alternatives.md), powered from USB 5 V directly, avoids it. A fix that keeps battery playback is an open question; open an issue with your timing.
 

@@ -8,8 +8,8 @@
 | 🔊 | 4 Ω 3 W driver | Moved from the stock `P2` connector to the MAX98357A |
 | 🔋 | 3.6 V 750 mAh Li-ion cell | Powers everything, through the stock board |
 | 🔌 | USB-C port and charger | Still charges the cell |
-| 🔘 | Power button | Still switches the speaker, now Wi-Fi included |
-| 🔘 | Second button | Rewired to the ESP32 as play/pause, next, previous |
+| 🔘 | Power button | Still switches the speaker, now Wi-Fi included, through the switched rail from check 1 🔍 |
+| 🔘 | Second button | Rewired to the ESP32 as play/pause, next, previous, after check 3 🔍 |
 | 📡 | JL7016C8 and ANT8817S | Stay on the board and powered, with no speaker attached |
 
 ## What is added

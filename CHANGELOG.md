@@ -19,3 +19,11 @@ All notable changes to this project are recorded here. The format follows
 - **Diagrams and brand.** Architecture and wiring diagrams in light and dark,
   drawn by `tools/gen_diagram.py`; the icon, drawn by `tools/gen_brand.py`.
 - **CI.** ESPHome config validation and a diagram freshness check.
+
+### Security
+- **Pinned startup chime.** The package fetches its chime from another
+  repository's `main` branch; `firmware/kallsup-sendspin.yaml` now pins it to
+  `e8f5c27`, so the `ref` pin really freezes what the package brings in.
+- **Captive-portal upload documented.** While the fallback hotspot is up, its
+  captive portal accepts firmware without the API key. SECURITY.md, the README
+  and the firmware notes now say so, and that `fallback_password` guards it.

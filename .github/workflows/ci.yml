@@ -29,7 +29,7 @@ jobs:
           esphome config firmware/kallsup-sendspin.yaml > /dev/null
 
   diagrams:
-    name: Diagrams and mockups match the generators
+    name: Pictures match their generators
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -38,3 +38,4 @@ jobs:
           python-version: "3.12"
       - run: python3 tools/gen_diagram.py --check
       - run: python3 tools/gen_mockups.py --check
+      - run: python3 tools/gen_brand.py --check

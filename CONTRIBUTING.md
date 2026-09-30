@@ -23,7 +23,7 @@ Keep SendspinZero as a pinned remote package; do not copy its YAML in. Bumping `
 
 ## Working on the diagrams and icon
 
-`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_brand.py` draws `brand/icon.png`; `tools/gen_mockups.py` draws the build mockups in `docs/assets/mockups/`; `tools/annotate_photos.py` draws the rings and labels on copies of the teardown photos into `docs/assets/annotated/`. The last two need `pip install pillow`. Edit the script, run it, commit the result; never edit the output by hand. CI runs `python3 tools/gen_diagram.py --check` and `python3 tools/gen_mockups.py --check`.
+`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_mockups.py` draws the build mockups in `docs/assets/mockups/`; `tools/annotate_photos.py` draws the rings and labels on copies of the teardown photos into `docs/assets/annotated/`. `tools/gen_brand.py` draws `brand/icon.svg`. `tools/annotate_photos.py` needs `pip install pillow`. Edit the script, run it, commit the result; never edit the output by hand. CI runs the `--check` of `gen_diagram.py`, `gen_mockups.py` and `gen_brand.py`.
 
 An annotation says what the docs say about that spot and nothing more: a pad a check has not settled is ringed amber as a check, never green as a place to solder.
 

@@ -80,7 +80,7 @@ If it switches itself off, the switched rail goes with it and the ESP32 loses po
 
 ## 2. Solder
 
-<img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build over the real photo of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
+<img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build on the back of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
 
 1. **Speaker**: unplug it from `P2` and connect it to the MAX98357A terminal, red to `+`, black to `−`. See [Wiring](wiring.md#speaker).
 2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to the TPS63020 `VIN`, with its `OUT` to the ESP32 `3V3`, once its output is [checked](#if-you-use-the-tps63020)).

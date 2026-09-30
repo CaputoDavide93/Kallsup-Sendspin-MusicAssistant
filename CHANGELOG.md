@@ -17,7 +17,8 @@ All notable changes to this project are recorded here. The format follows
 - **Board notes.** The KALLSUP E2507 teardown: parts, test pads, the ANT8817S
   datasheet summary and pin findings, each marked measured, inferred or open.
 - **Diagrams and brand.** Architecture and wiring diagrams in light and dark,
-  drawn by `tools/gen_diagram.py`; the icon, drawn by `tools/gen_brand.py`.
+  drawn by `tools/gen_diagram.py`; the icon, a flat vector speaker with Wi-Fi
+  arcs, drawn by `tools/gen_brand.py`.
 - **CI.** ESPHome config validation and a diagram freshness check.
 - **Board notes: continuity log and more parts.** The unpowered continuity
   tests behind the measured findings, the rest of the identified parts (X1,
@@ -28,7 +29,7 @@ All notable changes to this project are recorded here. The format follows
   low-battery and runtime runs after first power-up.
 - **Pictures for the build.** Mockups of the bench test and of the build
   inside the KALLSUP, with the ESP32-S3-Zero and MAX98357A drawn to scale and
-  the KALLSUP board shown as its real photo, plus a four-step strip on
+  the KALLSUP board laid out from the teardown with its pad names, plus a four-step strip on
   soldering a wire to a pad, drawn by `tools/gen_mockups.py`. Annotated copies of the teardown
   photos ring what to solder, measure first or keep off, drawn by
   `tools/annotate_photos.py`. CONTRIBUTING.md lists the real build photos

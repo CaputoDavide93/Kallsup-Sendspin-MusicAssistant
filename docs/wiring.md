@@ -6,9 +6,9 @@
        alt="Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
 </picture>
 
-The same connections on the real board, with the two new boards drawn to scale:
+The same connections as mockups, with every board drawn to scale:
 
-<img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build over the real photo of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
+<img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build on the back of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
 
 Items marked 🔍 are not yet measured. Do the checks in [Build guide](build-guide.md#before-you-solder) before soldering them.
 

@@ -12,7 +12,25 @@ Before the KALLSUP is opened, prove the new parts work on the desk.
 4. Flash the firmware and adopt it in Home Assistant: [Firmware](firmware.md).
 5. Play something from Music Assistant. The ESP32's LED turns green while it plays.
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/hookup-bench-dark.svg">
+  <img src="assets/hookup-bench-light.svg" width="100%"
+       alt="Bench test with jumper wires: ESP32 5V to MAX98357A Vin, GND to GND, GPIO2 to DIN, GPIO3 to BCLK, GPIO4 to LRC, any small speaker on the terminal, USB-C to the computer.">
+</picture>
+
+The pins are drawn in the boards' real order, so the picture matches the parts on the desk.
+
 Powered from the ESP32's USB-C on the bench, the whole thing is safe to rewire.
+
+### If you use the TPS63020
+
+Check the module on its own before it goes anywhere near the ESP32. Give its `VIN` and `GND` 3–5 V, from a charged cell or a bench supply, and measure `OUT` to `GND` with nothing else connected.
+
+| Reading | Meaning | What to do |
+|---|---|---|
+| About 3.3 V | Ready | Connect it as in [Wiring](wiring.md#power) |
+| 0 V | Not enabled | Link its `EN` pad to `VIN` |
+| Any other voltage | Output set wrong | Check its output-select pads (such as 3V3, 4V2 and 5V) and set 3.3 V |
 
 ## Before you solder
 
@@ -23,6 +41,13 @@ For continuity: battery unplugged, USB unplugged, meter on the beep range. For v
 ### Check 1: find the switched battery point 🔍
 
 On battery only, no USB. Measure each candidate with the speaker **off**, then **on**:
+
+| | |
+|---|---|
+| <img src="assets/annotated/board-back.jpg" width="420" alt="The back of the board with VCC_BAT ringed as a check 1 candidate that is probably always on, GND1 ringed as the ground joint, S1 and S2 ringed for check 3, and P2 and VCC_5V marked for reference."> | <img src="assets/annotated/board-front-amplifier.jpg" width="420" alt="The front of the board with R21 ringed as a check 1 candidate, the end away from U1, U1 ringed as keep off, and the VCC_PVDD pad marked."> |
+| Back: `VCC_BAT`, and `GND1` for the black probe | Front: `R21`. Never put a probe on `U1` |
+
+Rings on the photos: green, solder here; amber, measure first; red, keep off; blue, for reference.
 
 | Point | Speaker off | Speaker on |
 |---|---|---|
@@ -42,6 +67,10 @@ If it switches itself off, the switched rail goes with it and the ESP32 loses po
 
 ### Check 3: the second button's pad 🔍
 
+`S1` and `S2` are on the back (the first photo in check 1); `IOVDD` is on the front, beside the button nearest the `V2.0` marking.
+
+<img src="assets/annotated/board-front-buttons.jpg" width="360" alt="The front of the board near the V2.0 marking, with the IOVDD test pad ringed as the point to measure in check 3.">
+
 1. Unpowered, with continuity, find which of the back-side pads `S1` and `S2` connects to the second button (not the power button).
 2. Powered and on, measure `IOVDD`, then that pad idle and with the button held.
 
@@ -54,8 +83,14 @@ If it switches itself off, the switched rail goes with it and the ESP32 loses po
 
 ## 2. Solder
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/hookup-kallsup-dark.svg">
+  <img src="assets/hookup-kallsup-light.svg" width="100%"
+       alt="Inside the KALLSUP: the switched battery point feeds ESP32 5V and MAX98357A Vin, GND1 goes to both GND pins, the second-button pad goes to GPIO1, the audio wires stay as on the bench, and the stock speaker moves to the terminal.">
+</picture>
+
 1. **Speaker**: unplug it from `P2` and connect it to the MAX98357A terminal, red to `+`, black to `−`. See [Wiring](wiring.md#speaker).
-2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to the TPS63020 `VIN`, with its `OUT` to the ESP32 `3V3`).
+2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to the TPS63020 `VIN`, with its `OUT` to the ESP32 `3V3`, once its output is [checked](#if-you-use-the-tps63020)).
 3. **Ground**: from `GND1` to every `GND`.
 4. **Button**: from the pad found in check 3 to `GPIO1`.
 5. **Audio**: `GPIO2`, `GPIO3`, `GPIO4` to `DIN`, `BCLK`, `LRC`, as on the bench.
@@ -69,6 +104,13 @@ Tin each pad and each wire first, then touch them together for a second. Tape or
 3. Press the second button once: playback pauses.
 4. Switch off. The ESP32 should go dark with everything else.
 5. Plug in USB-C and confirm it still charges.
+
+### Battery runs
+
+Before closing the case, play from a full charge until it cuts out, at a steady volume. One run answers two questions.
+
+1. **Low battery.** If the ESP32 resets or drops Wi-Fi as the cell nears empty, add the TPS63020: [Hardware](hardware.md#tps63020-33-v-buck-boost-module-optional).
+2. **Runtime.** Note how long it lasted and at what volume. An issue with the figure helps the next builder.
 
 ## 4. Assemble
 

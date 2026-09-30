@@ -2,10 +2,12 @@
 # Wi-Fi speaker. ESP32-S3-Zero + Adafruit MAX98357A.
 #
 # Everything audio comes from RealDeco's SendspinZero Speaker config, pulled in
-# as a remote package and pinned to a commit, so an upstream change can never
-# reach this speaker without a deliberate bump of `ref`. This file only adds
-# what is specific to this build: its name, locked-down API/OTA/Wi-Fi, and the
-# KALLSUP's second button.
+# as a remote package and pinned to a commit, so an upstream change to that
+# YAML can never reach this speaker without a deliberate bump of `ref`. The
+# startup chime it downloads is pinned below for the same reason. ESPHome itself
+# is not pinned: its release carries the Sendspin and audio code. This file only
+# adds what is specific to this build: its name, locked-down API/OTA/Wi-Fi, the
+# pinned chime, and the KALLSUP's second button.
 #
 # Pins, all set by the package except the button:
 #   GPIO2  I2S data   -> MAX98357A DIN
@@ -31,7 +33,9 @@ packages:
 # that same key (`encryption: {}`, which ESPHome prefers over a password), and
 # sets Wi-Fi from secrets.yaml. Copy secrets.yaml.example; it is gitignored.
 # The captive portal stays as the fallback if the network is unreachable, now
-# behind a password instead of open.
+# behind a password instead of open. It also serves a firmware upload page that
+# does not check the API key, so while the hotspot is up, fallback_password is
+# what guards reflashing.
 api:
   encryption:
     key: !secret api_encryption_key
@@ -45,6 +49,12 @@ wifi:
   password: !secret wifi_password
   ap:
     password: !secret fallback_password
+
+# The package downloads its chime from another repository's `main` branch at
+# build time. Pin it to a commit so the `ref` above really freezes the package.
+audio_file:
+  - id: !extend ready_sound
+    file: https://github.com/RealDeco/xiaozhi-esphome/raw/e8f5c2707871e6465dbe52edd3cd71112d77efe5/sounds/Home_Connected.flac
 
 # The KALLSUP's second button, wired from its test pad on the back of the stock
 # board to GPIO1. This assumes the stock circuit pulls the pad to ground when

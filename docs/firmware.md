@@ -57,7 +57,7 @@ The stock Bluetooth chip still sees the button too. With nothing paired over Blu
 
 `esphome config` prints warnings like these, both expected:
 
-- **GPIO3 is a strapping pin.** SendspinZero uses it for the I2S bit clock. Its level only matters at reset, and the MAX98357A's `BCLK` is an input, so it does not pull the pin either way.
+- **GPIO3 is a strapping pin.** SendspinZero uses it for the I2S bit clock. The ESP32-S3 reads it at reset only to choose the JTAG source, and only if the `STRAP_JTAG_SEL` eFuse has been burned; on a stock board it is ignored (datasheet, table 3-5). The MAX98357A's `BCLK` is an input anyway, so it does not pull the pin either way.
 - **Merged multiple configurations for OTA.** This config adds the key requirement to SendspinZero's OTA entry; ESPHome merges the two into one, which is the intent.
 
 ## Updating SendspinZero

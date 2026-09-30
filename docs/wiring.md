@@ -3,7 +3,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/wiring-dark.svg">
   <img src="assets/wiring-light.svg" width="100%"
-       alt="Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
+       alt="Switched battery feeds the MAX98357A Vin and the ESP32 5V pin, directly or through an optional 5 V boost module. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
 </picture>
 
 The same connections as mockups, with every board drawn to scale:
@@ -17,15 +17,17 @@ Items marked 🔍 are not yet measured. Do the checks in [Build guide](build-gui
 | From | To | Why |
 |---|---|---|
 | 🔍 Switched battery pad | MAX98357A `Vin` | The amplifier accepts 2.5–5.5 V, so the cell feeds it directly |
-| 🔍 Switched battery pad | ESP32 `5V` | Simplest. Fine down to about 3.7 V of battery |
-| 🔍 Switched battery pad → TPS63020 `VIN`, TPS63020 `OUT` | ESP32 `3V3` | Instead of the line above, if the ESP32 resets on a low battery |
-| `GND1` | ESP32 `GND`, MAX98357A `GND`, TPS63020 `GND` | One ground point avoids hum |
+| 🔍 Switched battery pad | ESP32 `5V` | Simplest. Keeps 3.3 V down to about 3.4–3.5 V of battery (calculated) |
+| 🔍 Switched battery pad → 5 V boost module → ESP32 `5V` | ESP32 `5V` | Instead of the line above, for the whole charge, inside every datasheet limit. See [Hardware](hardware.md#a-regulator-for-the-esp32-optional) |
+| `GND1` | ESP32 `GND`, MAX98357A `GND`, regulator `GND` | One ground point avoids hum |
 
 **Switched, not raw.** `VCC_BAT` is the cell. If it is live even with the speaker off, which is likely, anything wired to it drains the battery while the speaker looks switched off. The point to use reads battery voltage with the speaker on and about 0 V with it off. Check 1 in the build guide finds it.
 
-**Never feed both `5V` and `3V3`** on the ESP32. Use one or the other.
+**Never feed both `5V` and `3V3`** on the ESP32. Use one or the other. Feeding `3V3` from a 3.3 V module works on many boards but is outside the on-board regulator's specification; the [Hardware](hardware.md#a-regulator-for-the-esp32-optional) notes explain why.
 
-**Do not plug the ESP32's own USB-C in while it is powered from the battery**, unless you have confirmed the board isolates the two. Flash over USB on the bench; after installation, update over the air.
+**Never plug the ESP32's own USB-C in once it is wired to the battery.** The [schematic](https://files.waveshare.com/wiki/ESP32-S3-Zero/ESP32-S3-Zero-Sch.pdf) connects USB `VBUS` straight to the `5V` pad, with no diode, so USB 5 V would go into the cell. Flash over USB on the bench; after installation, update over the air.
+
+**Wire size.** At full volume the amplifier draws about 0.55 A and the ESP32 peaks at about 0.35 A. Use 24–26 AWG for the battery and ground wires, and keep them short. The stock board already fed a 3.5 W boosted amplifier from the same cell, so its switched path is likely to cope 🔎; the battery run in the build guide confirms it.
 
 ## Audio
 
@@ -75,5 +77,5 @@ Rings on the photos: green, solder here; amber, measure first; red, keep off; bl
 |---|---|---|
 | KALLSUP board | 3: switched battery, `GND1`, button pad | `GND1` and button: large test pads; switched point: wherever check 1 finds it 🔍 |
 | MAX98357A | 5 pins and the 2-pin terminal | 2.54 mm |
-| TPS63020, if used | 4 pads | Large |
+| Regulator, if used | 4 pads | Large |
 | ESP32-S3-Zero | None with pre-soldered headers | — |

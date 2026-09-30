@@ -9,7 +9,9 @@
 
 ## The ESP32 resets or drops Wi-Fi as the battery runs down
 
-Its `5V` pad needs at least 3.7 V, and the cell goes down to about 3.0 V. Add a 3.3 V buck-boost module feeding the `3V3` pin instead of `5V`: [Hardware](hardware.md#tps63020-33-v-buck-boost-module-optional).
+On the `5V` pad, the ESP32's 3.3 V rail follows the cell down below about 3.4–3.5 V, and ESPHome's default brown-out level (2.44 V) does not reset it, so near empty it can misbehave rather than restart. Add a regulator: [Hardware](hardware.md#a-regulator-for-the-esp32-optional).
+
+If it happens during Wi-Fi bursts and the signal is strong, lowering the transmit power cuts the current peaks (the ESP32-S3 datasheet gives 340 mA at 21 dBm). In `firmware/kallsup-sendspin.yaml`, add `output_power: 17dB` under `wifi:`, then check that the stream still holds.
 
 ## The speaker switches itself off on battery 🔍
 
@@ -17,7 +19,15 @@ If the stock board powers down when it thinks nobody is listening, it takes the 
 
 ## The battery drains while the speaker is off
 
-The ESP32 is wired to a point that stays live when the speaker is off, probably `VCC_BAT`. Move it to the switched point from check 1.
+The ESP32 is wired to a point that stays live when the speaker is off, probably `VCC_BAT`. Move it to the switched point from check 1. If the switched point is right, check the button pad with the speaker off (check 3, step 3): a pad held high feeds the ESP32 through `GPIO1`.
+
+## It is quieter than it was
+
+Expected. The stock amplifier boosts its supply and makes 3.5 W; the MAX98357A runs straight from the cell and makes about 1.7 W at 3.7 V. Tying `GAIN` to `GND` (12 dB) or through 100 kΩ to `GND` (15 dB) makes quiet material louder, but it does not raise the maximum.
+
+## It never finishes charging while playing
+
+The charger may be waiting for the charge current to fall, and the new boards keep drawing from the cell. Stop playback to let it finish. See the battery runs in the [Build guide](build-guide.md#battery-runs).
 
 ## The button does nothing
 

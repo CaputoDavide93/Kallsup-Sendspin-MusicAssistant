@@ -18,15 +18,15 @@ The boards are drawn to scale with their pins in the real order, so the picture 
 
 Powered from the ESP32's USB-C on the bench, the whole thing is safe to rewire.
 
-### If you use the TPS63020
+### If you use a regulator
 
 Check the module on its own before it goes anywhere near the ESP32. Give its `VIN` and `GND` 3–5 V, from a charged cell or a bench supply, and measure `OUT` to `GND` with nothing else connected.
 
 | Reading | Meaning | What to do |
 |---|---|---|
-| About 3.3 V | Ready | Connect it as in [Wiring](wiring.md#power) |
+| About 5 V (a 5 V module) or 3.3 V (a 3.3 V module) | Ready | Connect it as in [Wiring](wiring.md#power) |
 | 0 V | Not enabled | Link its `EN` pad to `VIN` |
-| Any other voltage | Output set wrong | Check its output-select pads (such as 3V3, 4V2 and 5V) and set 3.3 V |
+| Any other voltage | Output set wrong | Check its output-select pads (such as 3V3, 4V2 and 5V) |
 
 ## Before you solder
 
@@ -58,7 +58,7 @@ If nothing switches, the speaker's power button probably switches only the stock
 
 ### Check 2: does it switch itself off on battery? 🔍
 
-On battery only, switch the speaker on, connect nothing over Bluetooth, and time how long it stays on. Leave it at least 30 minutes.
+On battery only, switch the speaker on, connect nothing over Bluetooth, and time how long it stays on. Leave it at least 30 minutes. The stock chip never sees the Wi-Fi audio, so to it an idle speaker and a converted one playing over Wi-Fi look the same; repeat the check with music playing once the build is done.
 
 If it switches itself off, the switched rail goes with it and the ESP32 loses power mid-song. That is solvable, but it changes the design; open an issue with how long it lasted. Running from the stock USB-C (Option D in [Alternatives](alternatives.md)) avoids it entirely.
 
@@ -78,12 +78,14 @@ If it switches itself off, the switched rail goes with it and the ESP32 loses po
 | Several different voltages across buttons | A resistor ladder read by an ADC | Do not wire it; open an issue with the readings |
 | `IOVDD` above 3.6 V | Higher logic than the ESP32 tolerates | Do not wire it directly |
 
+3. Switch the speaker off and measure the pad again. It should be about 0 V. If it still reads high, the stock chip holds it up while the ESP32 is unpowered, and would feed current into `GPIO1`, beyond the ESP32-S3's input limit of VDD + 0.3 V. Put a 10 kΩ resistor in series with the wire, which limits that current to a fraction of a milliamp, and open an issue with the readings. 🔎
+
 ## 2. Solder
 
 <img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build on the back of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
 
 1. **Speaker**: unplug it from `P2` and connect it to the MAX98357A terminal, red to `+`, black to `−`. See [Wiring](wiring.md#speaker).
-2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to the TPS63020 `VIN`, with its `OUT` to the ESP32 `3V3`, once its output is [checked](#if-you-use-the-tps63020)).
+2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to a regulator's `VIN`, with its `OUT` to the ESP32 `5V`, once its output is [checked](#if-you-use-a-regulator)).
 3. **Ground**: from `GND1` to every `GND`.
 4. **Button**: from the pad found in check 3 to `GPIO1`.
 5. **Audio**: `GPIO2`, `GPIO3`, `GPIO4` to `DIN`, `BCLK`, `LRC`, as on the bench.
@@ -104,8 +106,10 @@ Tin each pad and each wire first, then touch them together for a second. Tape or
 
 Before closing the case, play from a full charge until it cuts out, at a steady volume. One run answers two questions.
 
-1. **Low battery.** If the ESP32 resets or drops Wi-Fi as the cell nears empty, add the TPS63020: [Hardware](hardware.md#tps63020-33-v-buck-boost-module-optional).
-2. **Runtime.** Note how long it lasted and at what volume. An issue with the figure helps the next builder.
+1. **Low battery.** If the ESP32 resets or drops Wi-Fi as the cell nears empty, add a regulator: [Hardware](hardware.md#a-regulator-for-the-esp32-optional).
+2. **Loud passages.** Play something loud near the end of the charge. If the speaker cuts out on bass hits, the cell or the switched path sags under the amplifier's current.
+3. **Runtime.** Note how long it lasted and at what volume. An issue with the figure helps the next builder.
+4. **Charging while playing.** Plug in USB-C and keep playing until the charge light says full. With the new boards drawing from the cell, a charger that stops at a tenth of its charge current may never see the end of the charge ([Microchip AN1149](https://ww1.microchip.com/downloads/en/AppNotes/01149c.pdf)). The KALLSUP's charger chip is not identified. 🔎
 
 ## 4. Assemble
 

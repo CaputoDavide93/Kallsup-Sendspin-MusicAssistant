@@ -23,8 +23,8 @@ The build in this repository only relies on ✅ findings and the three 🔍 chec
 
 | Ref | Part | Notes | Status |
 |---|---|---|---|
-| U2 | JieLi **JL7016C8** (marked `BP2V742PVD`) | Bluetooth audio SoC, 24 MHz crystal `X1` | ✅ marking |
-| U1 | Anatek **ANT8817S** (marked `HC2611`) | Mono Class H amplifier with built-in boost, eSOP8 | ✅ marking |
+| U2 | JieLi **JL7016C8** (second marking line `BP2V742PVD`) | Bluetooth audio SoC, 24 MHz crystal `X1` | ✅ marking |
+| U1 | Anatek **ANT8817S** (second marking line `HC2611`) | Mono Class H amplifier with built-in boost, eSOP8 | ✅ marking |
 | L1 | Shielded power inductor next to U1 | The amplifier's boost inductor | 🔎 |
 | R21 | 1 Ω (`1R00`) with C9 | Probably the amplifier's supply filter | 🔎 |
 | EC1, EC2 | 470 µF 10 V electrolytics | Bulk capacitance, likely on the boosted rail | 🔎 |
@@ -68,7 +68,7 @@ A distributor lists it as a replacement for the ANT8815S, so that part's documen
 
 ### Pins
 
-With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left**. Standard SOP numbering applies: bottom row 1 to 4 left to right, top row 5 to 8 right to left.
+With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left** ✅ photo. Standard SOP numbering applies: bottom row 1 to 4 left to right, top row 5 to 8 right to left.
 
 | Pin | Finding | Status |
 |---|---|---|
@@ -81,7 +81,7 @@ One measurement disagrees with the layout: FB1 and FB2 were traced to bottom pin
 
 ### Output
 
-`Speaker +1` goes through ferrite bead FB1 and `Speaker -1` through FB2, each with its own filter capacitors and RC snubbers (R26/C22, R27/C31), with C26 across them. The output is **bridge-tied**: `Speaker -` is not ground. Never tie it to ground, and never connect another amplifier to it.
+`Speaker +1` goes through ferrite bead FB1 and `Speaker -1` through FB2, each with its own filter capacitors and RC snubbers (R26/C22, R27/C31), with C26 across them. The output is **bridge-tied** 🔎, from the layout: each leg has its own ferrite bead and filter. Treat `Speaker -` as not ground: never tie it to ground, and never connect another amplifier to it. Measuring that `Speaker -1` does not beep to `GND1` with `P2` empty would make this ✅.
 
 ## Photos
 

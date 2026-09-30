@@ -5,7 +5,7 @@
 - **The audio**: [SendspinZero](https://github.com/RealDeco/SendspinZero)'s `SendspinZero-Speaker.yaml`, pulled in as a remote package and pinned to a commit. It sets up I2S on `GPIO2`/`GPIO3`/`GPIO4` for a MAX98357A, the Sendspin media player, the status LED and the entities listed below.
 - **This build**: the device name, an encrypted API, OTA that requires the same key, Wi-Fi and a fallback-hotspot password from `secrets.yaml`, and the KALLSUP's second button.
 
-Nothing from SendspinZero is copied into this repository. Pinning the commit means an upstream change reaches the speaker only when `ref` is bumped on purpose.
+Nothing from SendspinZero is copied into this repository. Pinning the commit means an upstream change reaches the speaker only when `ref` is bumped on purpose. The startup chime, which the package downloads from another repository's `main` branch, is pinned to a commit in this file too. ESPHome itself is not pinned, and it carries the Sendspin and audio code, so an ESPHome release can still change how the speaker behaves; CI validates against the latest one every week.
 
 ## Flashing
 
@@ -17,11 +17,11 @@ pip install esphome
 esphome run firmware/kallsup-sendspin.yaml
 ```
 
-For the first flash, hold **BOOT** on the ESP32-S3-Zero while plugging in the USB-C cable; the board has no USB-to-UART chip and will not accept a flash otherwise. Later flashes go over the air, authenticated by the API key.
+For the first flash, hold **BOOT** on the ESP32-S3-Zero while plugging in the USB-C cable; the board has no USB-to-UART chip, and BOOT forces it into download mode if it does not enter it on its own. Later flashes go over the air, authenticated by the API key.
 
 The ESPHome Device Builder add-on in Home Assistant works too: paste the YAML into a new device and put the four secrets in its secrets editor.
 
-If Wi-Fi is unreachable at boot, the speaker opens its own access point, protected by `fallback_password`, with a captive portal after about 90 seconds, so it can still be put on a network.
+If Wi-Fi is unreachable at boot, the speaker opens its own access point, protected by `fallback_password`, with a captive portal after about 90 seconds, so it can still be put on a network. The captive portal also takes a firmware upload without the API key, so while the hotspot is up, `fallback_password` is what stops anyone else reflashing it.
 
 ## Adopting it
 
@@ -34,7 +34,7 @@ Entities:
 | Sendspin Group Media Player | SendspinZero | The player Music Assistant streams to |
 | Media Player | SendspinZero | Local player, used for announcements |
 | Song Title, Song Artist, Album Name | SendspinZero | What is playing |
-| Startup sound | SendspinZero | Switch: chime on boot |
+| Startup sound | SendspinZero | Switch: chime when Home Assistant first connects after boot |
 | Restart | SendspinZero | Button |
 | LED light | SendspinZero | The ESP32's WS2812: red idle, green playing |
 | Button | This repository | The KALLSUP's second button, as a binary sensor |
@@ -55,7 +55,7 @@ The stock Bluetooth chip still sees the button too. With nothing paired over Blu
 
 ## Validation warnings
 
-`esphome config` prints two warnings, both expected:
+`esphome config` prints warnings like these, both expected:
 
 - **GPIO3 is a strapping pin.** SendspinZero uses it for the I2S bit clock. Its level only matters at reset, and the MAX98357A's `BCLK` is an input, so it does not pull the pin either way.
 - **Merged multiple configurations for OTA.** This config adds the key requirement to SendspinZero's OTA entry; ESPHome merges the two into one, which is the intent.

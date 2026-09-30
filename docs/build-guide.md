@@ -16,7 +16,7 @@ Powered from the ESP32's USB-C on the bench, the whole thing is safe to rewire.
 
 ## Before you solder
 
-Three checks on the KALLSUP board, all with the multimeter, about fifteen minutes. They settle the three 🔍 items; nothing gets soldered until they are done.
+Three checks on the KALLSUP board, all with the multimeter. Checks 1 and 3 take about fifteen minutes; check 2 needs the speaker left on for at least 30. They settle the three 🔍 items; nothing gets soldered until they are done.
 
 For continuity: battery unplugged, USB unplugged, meter on the beep range. For voltage: meter on DC volts, black probe on `GND1`, and touch only test pads or the ends of passive parts, never the pins of a chip.
 

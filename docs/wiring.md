@@ -3,7 +3,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/wiring-dark.svg">
   <img src="assets/wiring-light.svg" width="100%"
-       alt="Switched battery feeds the MAX98357A Vin and, optionally through a TPS63020, the ESP32 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
+       alt="Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
 </picture>
 
 Items marked 🔍 are not yet measured. Do the checks in [Build guide](build-guide.md#before-you-solder) before soldering them.
@@ -39,9 +39,9 @@ The pins are the ones the SendspinZero Speaker firmware uses. Keep these three w
 
 Unplug the speaker from the stock `P2` connector and connect it to the MAX98357A's screw terminal: **red to `+`, black to `−`**.
 
-The plug is small. Either snip the wires close to it and strip them into the terminal, or buy a matching 2-pin pigtail so nothing is cut. Measure the plug's pin spacing first: 2.0 mm is JST-PH, 2.5 mm is JST-XH.
+The plug is small. Either snip the wires close to it and strip them into the terminal, or buy a matching 2-pin pigtail so nothing is cut. Measure the plug's pin spacing first: 1.25 mm is Molex PicoBlade or JST GH, 1.5 mm is JST ZH, 2.0 mm is JST-PH, 2.5 mm is JST-XH.
 
-The stock output is bridge-tied: `Speaker -` is not ground. With the speaker moved, `P2` is simply left empty.
+The stock output is treated as bridge-tied (🔎): `Speaker -` is not ground. With the speaker moved, `P2` is simply left empty.
 
 <img src="assets/photos/board-back-speaker-output.jpg" width="420" alt="The back of the KALLSUP board around the P2 speaker connector: Speaker +1 and Speaker -1 test pads, ferrite beads FB1 and FB2, and the two 470 µF capacitors.">
 
@@ -67,7 +67,7 @@ The power button is not wired to the ESP32.
 
 | Where | Joints | Size |
 |---|---|---|
-| KALLSUP board | 3: switched battery, `GND1`, button pad | Large test pads |
+| KALLSUP board | 3: switched battery, `GND1`, button pad | `GND1` and button: large test pads; switched point: wherever check 1 finds it 🔍 |
 | MAX98357A | 5 pins and the 2-pin terminal | 2.54 mm |
 | TPS63020, if used | 4 pads | Large |
 | ESP32-S3-Zero | None with pre-soldered headers | — |

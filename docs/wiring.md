@@ -6,6 +6,14 @@
        alt="Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
 </picture>
 
+The same connections as they look on the boards, pins in their real order:
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/hookup-kallsup-dark.svg">
+  <img src="assets/hookup-kallsup-light.svg" width="100%"
+       alt="Inside the KALLSUP: the switched battery point feeds ESP32 5V and MAX98357A Vin, GND1 goes to both GND pins, the second-button pad goes to GPIO1, the audio wires stay as on the bench, and the stock speaker moves to the terminal.">
+</picture>
+
 Items marked 🔍 are not yet measured. Do the checks in [Build guide](build-guide.md#before-you-solder) before soldering them.
 
 ## Power
@@ -43,7 +51,7 @@ The plug is small. Either snip the wires close to it and strip them into the ter
 
 The stock output is treated as bridge-tied (🔎): `Speaker -` is not ground. With the speaker moved, `P2` is simply left empty.
 
-<img src="assets/photos/board-back-speaker-output.jpg" width="420" alt="The back of the KALLSUP board around the P2 speaker connector: Speaker +1 and Speaker -1 test pads, ferrite beads FB1 and FB2, and the two 470 µF capacitors.">
+<img src="assets/annotated/board-back-speaker-output.jpg" width="420" alt="The back of the KALLSUP board around the P2 speaker connector, with P2 marked as where to unplug the speaker, and the Speaker +1 and Speaker -1 pads ringed as keep off.">
 
 ## Button
 
@@ -61,7 +69,9 @@ The power button is not wired to the ESP32.
 
 `GND1`, `VCC_5V`, `USB_DP1` and `USB_DM1` are a row of four test pads near the USB-C port; `VCC_BAT` sits by diode `D1`. All are about 2 mm across and take a wire easily.
 
-<img src="assets/photos/board-back.jpg" width="560" alt="The whole back of the board: P2 speaker connector top left, S1 and S2 button test pads, VCC_BAT, the USB test pads, the battery connector P1 and the USB-C port.">
+<img src="assets/annotated/board-back.jpg" width="560" alt="The whole back of the board with GND1 ringed as the ground joint, VCC_BAT, S1 and S2 ringed as points to measure first, and P2 and VCC_5V marked for reference.">
+
+Rings on the photos: green, solder here; amber, measure first; red, keep off; blue, for reference.
 
 ## Soldering budget
 

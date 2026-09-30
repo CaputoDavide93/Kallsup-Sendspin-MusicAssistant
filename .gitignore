@@ -1,0 +1,13 @@
+# ESPHome
+firmware/secrets.yaml
+firmware/.esphome/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Editor and OS
+.DS_Store
+.idea/
+.vscode/

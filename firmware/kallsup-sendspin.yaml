@@ -1,0 +1,88 @@
+# KALLSUP Sendspin: an IKEA KALLSUP turned into a Music Assistant (Sendspin)
+# Wi-Fi speaker. ESP32-S3-Zero + Adafruit MAX98357A.
+#
+# Everything audio comes from RealDeco's SendspinZero Speaker config, pulled in
+# as a remote package and pinned to a commit, so an upstream change can never
+# reach this speaker without a deliberate bump of `ref`. This file only adds
+# what is specific to this build: its name, locked-down API/OTA/Wi-Fi, and the
+# KALLSUP's second button.
+#
+# Pins, all set by the package except the button:
+#   GPIO2  I2S data   -> MAX98357A DIN
+#   GPIO3  I2S clock  -> MAX98357A BCLK
+#   GPIO4  I2S LR     -> MAX98357A LRC
+#   GPIO1  KALLSUP second-button pad (this file)
+#   GPIO21 on-board WS2812 LED (package)
+
+substitutions:
+  name: kallsup-sendspin
+  friendly_name: KALLSUP Sendspin
+
+packages:
+  sendspinzero_speaker:
+    url: https://github.com/RealDeco/SendspinZero
+    # Bump deliberately, then validate: esphome config firmware/kallsup-sendspin.yaml
+    ref: 0c7f82b685b78dfcc09b04564cdd68ee0a222fd5
+    files: [SendspinZero-Speaker.yaml]
+
+# The package leaves the ESPHome API unencrypted, OTA open and Wi-Fi to be set
+# over Improv or the captive portal. A speaker that anyone on the network can
+# reflash is not acceptable, so this file encrypts the API, makes OTA require
+# that same key (`encryption: {}`, which ESPHome prefers over a password), and
+# sets Wi-Fi from secrets.yaml. Copy secrets.yaml.example; it is gitignored.
+# The captive portal stays as the fallback if the network is unreachable, now
+# behind a password instead of open.
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+    encryption: {}
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    password: !secret fallback_password
+
+# The KALLSUP's second button, wired from its test pad on the back of the stock
+# board to GPIO1. This assumes the stock circuit pulls the pad to ground when
+# pressed; measure that first (docs/build-guide.md, check 3). The power button
+# is not wired here: it stays with the stock board and switches the whole
+# speaker on and off.
+binary_sensor:
+  - platform: gpio
+    id: kallsup_button
+    name: Button
+    pin:
+      number: GPIO1
+      mode: INPUT_PULLUP
+      inverted: true
+    filters:
+      - delayed_on: 20ms
+    on_multi_click:
+      # Single press: play or pause.
+      - timing:
+          - ON for at most 350ms
+          - OFF for at least 351ms
+        then:
+          - media_player.toggle: sendspin_group_media_player
+      # Double press: next track.
+      - timing:
+          - ON for at most 350ms
+          - OFF for at most 350ms
+          - ON for at most 350ms
+          - OFF for at least 351ms
+        then:
+          - media_player.next: sendspin_group_media_player
+      # Triple press: previous track.
+      - timing:
+          - ON for at most 350ms
+          - OFF for at most 350ms
+          - ON for at most 350ms
+          - OFF for at most 350ms
+          - ON for at most 350ms
+          - OFF for at least 351ms
+        then:
+          - media_player.previous: sendspin_group_media_player

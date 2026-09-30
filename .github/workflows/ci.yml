@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"   # weekly: ESPHome releases can change what validates
+
+jobs:
+  firmware:
+    name: ESPHome config validates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: pip install esphome
+      - name: Validate with the example secrets and a generated key
+        # The example carries CHANGE_ME_KEY on purpose: a real-looking key in
+        # an example file is indistinguishable from a leaked one to a secret
+        # scanner. ESPHome needs a real 32-byte key to validate, so make one.
+        # This also fetches the pinned SendspinZero package, so a vanished
+        # upstream commit fails here rather than at the next flash.
+        run: |
+          cp firmware/secrets.yaml.example firmware/secrets.yaml
+          sed -i "s|CHANGE_ME_KEY|$(openssl rand -base64 32)|" firmware/secrets.yaml
+          esphome config firmware/kallsup-sendspin.yaml > /dev/null
+
+  diagrams:
+    name: Diagrams match the generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - run: python3 tools/gen_diagram.py --check

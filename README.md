@@ -81,6 +81,8 @@ The ESP32's own regulator accepts 3.7–6 V on its 5V pin, so on a full battery 
 
 On the KALLSUP board that is three joints: `GND1` and the button pad are large test pads, and the switched battery point is wherever check 1 finds it 🔍, possibly the end of a passive part. Nothing touches the amplifier chip. Full detail, photos and the reasons: [Wiring](docs/wiring.md).
 
+<img src="docs/assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build over the real photo of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
+
 ---
 
 ## 🚀 Quick Start
@@ -140,14 +142,15 @@ Kallsup-Sendspin-MusicAssistant/
 │   ├── kallsup-sendspin.yaml   # 📟 ESPHome config: SendspinZero Speaker + KALLSUP button
 │   └── secrets.yaml.example
 ├── docs/                       # 📚 build guide, wiring, board notes (index: docs/README.md)
-│   └── assets/                 # 🖼️ light/dark diagrams, teardown photos, annotated copies
+│   └── assets/                 # 🖼️ diagrams, build mockups, teardown photos, annotated copies
 ├── brand/                      # 🎨 icon, drawn by tools/gen_brand.py
 ├── tools/
 │   ├── gen_diagram.py          # 🤖 draws docs/assets diagrams; --check in CI
+│   ├── gen_mockups.py          # 🧩 build mockups: bench, inside the KALLSUP, soldering; --check in CI
 │   ├── annotate_photos.py      # 🏷️ rings and labels on copies of the photos
 │   └── gen_brand.py            #    draws brand/icon.png
 ├── .github/
-│   ├── workflows/ci.yml        # ✅ ESPHome config validates, diagrams up to date
+│   ├── workflows/ci.yml        # ✅ ESPHome config validates, diagrams and mockups up to date
 │   ├── ISSUE_TEMPLATE/         # 🐛 bug report, feature request
 │   └── dependabot.yml
 ├── .gitignore                  # 🙈 secrets.yaml, .esphome/, editor files
@@ -169,9 +172,10 @@ cp firmware/secrets.yaml.example firmware/secrets.yaml
 sed -i.bak "s|CHANGE_ME_KEY|$(openssl rand -base64 32)|" firmware/secrets.yaml && rm firmware/secrets.yaml.bak
 esphome config firmware/kallsup-sendspin.yaml   # validates, including the remote package
 python3 tools/gen_diagram.py --check            # diagrams match the generator
+python3 tools/gen_mockups.py --check            # build mockups match theirs
 ```
 
-CI runs both on pushes to `main`, on pull requests and weekly. They prove the config is valid and the diagrams are current; they cannot prove the wiring, which is why the build guide starts with a bench test.
+CI runs all three on pushes to `main`, on pull requests and weekly. They prove the config is valid and the pictures are current; they cannot prove the wiring, which is why the build guide starts with a bench test.
 
 ---
 

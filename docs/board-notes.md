@@ -86,7 +86,7 @@ No test measured `Speaker -1` against `GND1`, so the bridge-tied output below st
 
 ## The ANT8817S
 
-The datasheet is only published in Chinese: the **ANT8817S product manual V1.0** from Anatek (深圳市安耐科电子技术有限公司), hosted by the distributor 音芯派 ([PDF](http://www.yinxinpai.com/public/uploads/files/20220805/06e58ba51fd9a66ff64316f2a78a2c8e.pdf)). The facts below are from it. Earlier notes used the manual for the ANT8817, without the S, which calls itself Class H; this board's chip is marked `ANT8817S`, and its own manual describes a Class AB/D amplifier with an adaptive boost.
+The datasheet is only published in Chinese; there is an [English translation](ant8817s-datasheet.md) in this repository. It is the **ANT8817S product manual V1.0** from Anatek (深圳市安耐科电子技术有限公司), hosted by the distributor 音芯派 ([PDF](http://www.yinxinpai.com/public/uploads/files/20220805/06e58ba51fd9a66ff64316f2a78a2c8e.pdf)). The facts below are from it. Earlier notes used the manual for the ANT8817, without the S, which calls itself Class H; this board's chip is marked `ANT8817S`, and its own manual describes a Class AB/D amplifier with an adaptive boost.
 
 | | Datasheet fact |
 |---|---|

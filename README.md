@@ -30,7 +30,7 @@ Bluetooth is given up on purpose. Keeping it means feeding audio into the stock 
 |---|---|---|
 | 📟 | **Firmware** (`firmware/`) | ESPHome config: SendspinZero Speaker as a pinned remote package, plus an encrypted API, OTA locked to the same key, Wi-Fi and a fallback-hotspot password from secrets, and the KALLSUP's second button as play/pause, next and previous |
 | 🔌 | **Wiring** (`docs/wiring.md`) | Every connection, pad by pad, with the reason for each |
-| 🔬 | **Board notes** (`docs/board-notes.md`) | What is on the KALLSUP board: the JL7016C8 Bluetooth SoC, the ANT8817S amplifier with its pinout and datasheet facts in English, test pads, the continuity test log, and which findings are measured versus inferred |
+| 🔬 | **Board notes** (`docs/board-notes.md`) | What is on the KALLSUP board: the JL7016C8 Bluetooth SoC, the ANT8817S amplifier and its datasheet translated into English, test pads, the continuity test log, and which findings are measured versus inferred |
 | 🧭 | **Build guide** (`docs/build-guide.md`) | Bench test, the three multimeter checks, then soldering, first power-up, battery runs and assembly |
 
 ---
@@ -195,7 +195,17 @@ The speaker joins your Wi-Fi and exposes the ESPHome API. This repository encryp
 
 ## 🙏 Credits
 
-The audio firmware is [SendspinZero](https://github.com/RealDeco/SendspinZero) by RealDeco (MIT), used unmodified as a pinned package. [Sendspin](https://www.sendspin-audio.com) and [Music Assistant](https://www.music-assistant.io) do the streaming.
+| | Who | What this project uses |
+|---|---|---|
+| 🎵 | [RealDeco](https://github.com/RealDeco) | [SendspinZero](https://github.com/RealDeco/SendspinZero) (MIT), the audio firmware, used unmodified as a pinned package; and the startup chime from [xiaozhi-esphome](https://github.com/RealDeco/xiaozhi-esphome), fetched at build time |
+| 📡 | [Sendspin](https://www.sendspin-audio.com) and [Music Assistant](https://www.music-assistant.io) | The streaming |
+| 🧩 | [ESPHome](https://esphome.io) | The firmware framework |
+| 🔈 | [ANATEK](http://www.anatek.com.cn) (深圳市安耐科电子技术有限公司) | The ANT8817S datasheet, [translated](docs/ant8817s-datasheet.md) with credit; © ANATEK |
+| 🧠 | [Waveshare](https://www.waveshare.com/wiki/ESP32-S3-Zero) and [Espressif](https://www.espressif.com) | The ESP32-S3-Zero pinout and schematic, and the ESP32-S3 datasheet, behind the mockups and the power notes |
+| 🔊 | [Adafruit](https://www.adafruit.com/product/3006) and Analog Devices (Maxim) | The MAX98357A breakout pinout and datasheet |
+| ⚡ | Microne and Microchip | The ME6217 regulator datasheet and application note AN1149, behind the power notes |
+
+Product names are their owners' trademarks. This project is not affiliated with IKEA or any of the companies above.
 
 ---
 
@@ -207,7 +217,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md). Measurements from other KALLSUP units ar
 
 ## 📄 License
 
-MIT. See [LICENSE](LICENSE). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+MIT. See [LICENSE](LICENSE). The one exception is [docs/ant8817s-datasheet.md](docs/ant8817s-datasheet.md), a translation of ANATEK's manual, which stays © ANATEK and is not covered by the MIT licence. Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ---
 

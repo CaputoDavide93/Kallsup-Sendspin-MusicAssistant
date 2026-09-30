@@ -50,6 +50,14 @@ All notable changes to this project are recorded here. The format follows
   reading for the button pad, and charging-while-playing and loud-passage
   battery runs. Record in `docs/archive/2026/2026-09-30-design-review.md`.
 
+- **ANT8817S datasheet in English.** A translation of ANATEK's manual in
+  `docs/ant8817s-datasheet.md`, credited, with the original linked; it stays
+  © ANATEK and outside the MIT licence.
+- **Findings log archived.** The teardown working log, as written, in
+  `docs/archive/2026/`.
+- **Credits.** The README credits every project and maker whose work or
+  documentation the build relies on.
+
 ### Security
 - **Pinned startup chime.** The package fetches its chime from another
   repository's `main` branch; `firmware/kallsup-sendspin.yaml` now pins it to

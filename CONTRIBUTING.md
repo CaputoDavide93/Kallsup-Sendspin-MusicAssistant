@@ -23,13 +23,13 @@ Keep SendspinZero as a pinned remote package; do not copy its YAML in. Bumping `
 
 ## Working on the diagrams and icon
 
-`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_brand.py` draws `brand/icon.png`; `tools/annotate_photos.py` draws the rings and labels on copies of the teardown photos into `docs/assets/annotated/`. The last two need `pip install pillow`. Edit the script, run it, commit the result; never edit the output by hand. CI runs `python3 tools/gen_diagram.py --check`.
+`tools/gen_diagram.py` draws `docs/assets/*-light.svg` and `*-dark.svg`; `tools/gen_brand.py` draws `brand/icon.png`; `tools/gen_mockups.py` draws the build mockups in `docs/assets/mockups/`; `tools/annotate_photos.py` draws the rings and labels on copies of the teardown photos into `docs/assets/annotated/`. The last two need `pip install pillow`. Edit the script, run it, commit the result; never edit the output by hand. CI runs `python3 tools/gen_diagram.py --check` and `python3 tools/gen_mockups.py --check`.
 
 An annotation says what the docs say about that spot and nothing more: a pad a check has not settled is ringed amber as a check, never green as a place to solder.
 
 ## Photos of your build
 
-The pictures of the wiring are drawn, because nobody has finished this build yet. Real photos of a build are the next most useful contribution after measurements. Resize them to 1400 px on the long side, strip the metadata, and put them in `docs/assets/photos/` with these names:
+The wiring pictures are mockups, because nobody has finished this build yet. Real photos of a build are the next most useful contribution after measurements. Resize them to 1400 px on the long side, strip the metadata, and put them in `docs/assets/photos/` with these names:
 
 | File | Shot |
 |---|---|

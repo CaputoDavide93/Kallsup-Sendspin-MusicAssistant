@@ -26,9 +26,10 @@ All notable changes to this project are recorded here. The format follows
   `VCC_PW00`/`VCC_PVDD` correction.
 - **Build guide: extra tests.** A TPS63020 output check on the bench, and
   low-battery and runtime runs after first power-up.
-- **Pictures for the build.** Two hookup views drawn with the boards' real
-  pin order and coloured wires, one for the bench test and one inside the
-  KALLSUP, in the build guide and wiring doc. Annotated copies of the teardown
+- **Pictures for the build.** Mockups of the bench test and of the build
+  inside the KALLSUP, with the ESP32-S3-Zero and MAX98357A drawn to scale and
+  the KALLSUP board shown as its real photo, plus a four-step strip on
+  soldering a wire to a pad, drawn by `tools/gen_mockups.py`. Annotated copies of the teardown
   photos ring what to solder, measure first or keep off, drawn by
   `tools/annotate_photos.py`. CONTRIBUTING.md lists the real build photos
   wanted.

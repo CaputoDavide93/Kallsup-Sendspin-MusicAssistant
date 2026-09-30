@@ -12,13 +12,9 @@ Before the KALLSUP is opened, prove the new parts work on the desk.
 4. Flash the firmware and adopt it in Home Assistant: [Firmware](firmware.md).
 5. Play something from Music Assistant. The ESP32's LED turns green while it plays.
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/hookup-bench-dark.svg">
-  <img src="assets/hookup-bench-light.svg" width="100%"
-       alt="Bench test with jumper wires: ESP32 5V to MAX98357A Vin, GND to GND, GPIO2 to DIN, GPIO3 to BCLK, GPIO4 to LRC, any small speaker on the terminal, USB-C to the computer.">
-</picture>
+<img src="assets/mockups/bench-test.svg" width="100%" alt="Bench test mockup: an ESP32-S3-Zero with USB-C to a computer, jumper wires from 5V to Vin, GND to GND, GP2 to DIN, GP3 to BCLK and GP4 to LRC on a MAX98357A, and a small speaker on its screw terminal.">
 
-The pins are drawn in the boards' real order, so the picture matches the parts on the desk.
+The boards are drawn to scale with their pins in the real order, so the picture matches the parts on the desk.
 
 Powered from the ESP32's USB-C on the bench, the whole thing is safe to rewire.
 
@@ -84,17 +80,15 @@ If it switches itself off, the switched rail goes with it and the ESP32 loses po
 
 ## 2. Solder
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/hookup-kallsup-dark.svg">
-  <img src="assets/hookup-kallsup-light.svg" width="100%"
-       alt="Inside the KALLSUP: the switched battery point feeds ESP32 5V and MAX98357A Vin, GND1 goes to both GND pins, the second-button pad goes to GPIO1, the audio wires stay as on the bench, and the stock speaker moves to the terminal.">
-</picture>
+<img src="assets/mockups/inside-kallsup.svg" width="100%" alt="Mockup of the build over the real photo of the KALLSUP board: GND1 to both GND pins, the switched battery point from check 1 to ESP32 5V and MAX98357A Vin, S1 or S2 from check 3 to GP1, GP2, 3 and 4 to DIN, BCLK and LRC, and the stock speaker on the terminal.">
 
 1. **Speaker**: unplug it from `P2` and connect it to the MAX98357A terminal, red to `+`, black to `−`. See [Wiring](wiring.md#speaker).
 2. **Power**: from the switched point found in check 1, one wire to MAX98357A `Vin` and one to the ESP32 `5V` pad (or to the TPS63020 `VIN`, with its `OUT` to the ESP32 `3V3`, once its output is [checked](#if-you-use-the-tps63020)).
 3. **Ground**: from `GND1` to every `GND`.
 4. **Button**: from the pad found in check 3 to `GPIO1`.
 5. **Audio**: `GPIO2`, `GPIO3`, `GPIO4` to `DIN`, `BCLK`, `LRC`, as on the bench.
+
+<img src="assets/mockups/solder-a-pad.svg" width="100%" alt="Four close-ups of soldering a wire to a test pad: tin the pad, strip and tin the wire, lay it on the pad and touch the iron for one to two seconds, then check for a smooth shiny joint and tape the wire down.">
 
 Tin each pad and each wire first, then touch them together for a second. Tape or glue every wire down near its joint; a tugged wire lifts a pad.
 

@@ -33,6 +33,14 @@ All notable changes to this project are recorded here. The format follows
   `tools/annotate_photos.py`. CONTRIBUTING.md lists the real build photos
   wanted.
 
+### Changed
+- **ANT8817S datasheet.** Board notes now use the chip's own manual (ANT8817S
+  V1.0) instead of the ANT8817's: a Class AB/D amplifier with an adaptive
+  boost, not Class H. The full pinout, `CTRL` levels, gain formula and
+  application circuit are compared with the board: pin 7 matches the measured
+  `VCC_PVDD`, R21 is probably the boost snubber, and test 9 disagrees with it.
+  Check 1 and route A follow.
+
 ### Security
 - **Pinned startup chime.** The package fetches its chime from another
   repository's `main` branch; `firmware/kallsup-sendspin.yaml` now pins it to

@@ -52,7 +52,7 @@ CALLOUTS = {
         ((290, 808, 30), "avoid", ["Speaker -1", "treat as not ground:", "never tie it to GND"], (430, 960)),
     ],
     "board-front-amplifier": [
-        ((620, 338, 46), "check", ["R21", "check 1: try the end", "away from U1"], (330, 110)),
+        ((620, 338, 46), "check", ["R21", "check 1: reads the", "amplifier's supply"], (330, 110)),
         ((785, 485, 110), "avoid", ["U1, ANT8817S", "never probe its pins"], (960, 420)),
         ((820, 292, 30), "info", ["VCC_PVDD", "joins U1 pin 7"], (960, 200)),
     ],

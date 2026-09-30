@@ -25,15 +25,15 @@ The build in this repository only relies on ✅ findings and the three 🔍 chec
 |---|---|---|---|
 | U2 | JieLi **JL7016C8** (second marking line `BP2V742PVD`) | Bluetooth audio SoC | ✅ marking |
 | X1 | 24.0 MHz crystal | U2's clock | ✅ marking |
-| U1 | Anatek **ANT8817S** (second marking line `HC2611`) | Mono Class H amplifier with built-in boost, eSOP8 | ✅ marking |
-| L1 | Shielded power inductor next to U1 | The amplifier's boost inductor | 🔎 |
-| R21 | 1 Ω (`1R00`) with C9 | Probably the amplifier's supply filter | 🔎 |
+| U1 | Anatek **ANT8817S** (second marking line `HC2611`) | Mono Class D amplifier (with a Class AB mode) and a built-in adaptive boost, eSOP8 | ✅ marking |
+| L1 | Shielded power inductor next to U1 | The amplifier's boost inductor, beside pin 8 (`SW`); the datasheet uses 6.8 µH, 3 A | 🔎 |
+| R21 | 1 Ω (`1R00`) with C9 | Probably the datasheet's 1 Ω + 2.2 nF snubber on the `SW` switch node, not a supply filter. At DC both ends sit at the amplifier's supply voltage | 🔎 |
 | C10, C18 | Next to the `VCC_PVDD` pad | Decoupling on the output-stage supply | 🔎 |
-| C8, C11, C19, R22, R23, R24, R25 | Next to U1 pins 1 to 4 | The input and `CTRL` network | 🔎 |
+| C8, C11, C19, R22, R23, R24, R25 | Next to U1 pins 1 to 4 | The input and `CTRL` network. The matched pairs fit the datasheet's 0.22 µF + 20 kΩ on each input (C11/C19, R23/R25); R22 fits a `CTRL` divider ([test 10](#continuity-tests)) | 🔎 |
 | FB1, FB2 | Ferrite beads | FB1 in the `Speaker +` leg, FB2 in the `Speaker -` leg ([tests 4 to 7](#continuity-tests)) | ✅ continuity |
 | C23, C32, C26 | Around FB1 and FB2 | Output filter; C26 across the two legs | 🔎 |
 | R26/C22, R27/C31 | Around FB1 and FB2 | An RC snubber on each leg | 🔎 |
-| EC1, EC2 | 470 µF 10 V electrolytics | Bulk capacitance, likely on the boosted rail | 🔎 |
+| EC1, EC2 | 470 µF 10 V electrolytics | The datasheet has two 470 µF: one on the battery input, one on `PVDD`, the boost output. Which is which is not measured | 🔎 |
 | D1 | SS34 Schottky, 3 A 40 V | Power path from USB | 🔎 |
 | Q1 | `2301D`, a P-channel MOSFET | Power switching | 🔎 |
 | Q2, Q3, ZD1 | Near the power path | Power control | 🔎 |
@@ -86,33 +86,40 @@ No test measured `Speaker -1` against `GND1`, so the bridge-tied output below st
 
 ## The ANT8817S
 
-The datasheet is only published in Chinese. The facts below are from the manufacturer's manual (ANT8817 product manual V1.0.3, posted on the [21ic forum](https://bbs.21ic.com/icview-3050260-1-1.html)) and from distributor listings that reproduce it ([dzsc](https://product.dzsc.com/product/785710-202112214757633.html)).
+The datasheet is only published in Chinese: the **ANT8817S product manual V1.0** from Anatek (深圳市安耐科电子技术有限公司), hosted by the distributor 音芯派 ([PDF](http://www.yinxinpai.com/public/uploads/files/20220805/06e58ba51fd9a66ff64316f2a78a2c8e.pdf)). The facts below are from it. Earlier notes used the manual for the ANT8817, without the S, which calls itself Class H; this board's chip is marked `ANT8817S`, and its own manual describes a Class AB/D amplifier with an adaptive boost.
 
 | | Datasheet fact |
 |---|---|
-| 🔊 | 3.5 W into 4 Ω at 3.7 V and 1% THD, mono |
-| ⚡ | Synchronous adaptive boost with several supply rails (Class H), up to 80% overall efficiency |
+| 🔊 | 3.5 W into 4 Ω at 3.7 V in Class D with ALC (4.3 W at 10% THD); 1.3 W in Class AB at 1% THD; mono |
+| ⚡ | Synchronous adaptive boost with several supply rails, up to 80% overall efficiency (78% at 3.5 W); oscillator 350 kHz |
 | 🎚️ | ALC: detects clipping and lowers the gain, so a loud track or a sagging battery does not distort |
-| 🔀 | `CTRL` pin: its voltage selects the operating mode and turns ALC on or off |
-| 🎛️ | Fully differential input |
-| 🔋 | 3–5 V single supply |
-| 🛡️ | Over-current, over-temperature and short-circuit protection; pop suppression at power-up and power-down |
+| 🔀 | `CTRL` pin: 2.1 V to `VDD` is Class D with ALC; 1.3–1.8 V is Class AB; below 0.4 V, or floating (internal pull-down), the chip is off. The level can come from a resistor divider |
+| 🎛️ | Fully differential input, usable single-ended with the same gain. Gain = 360 kΩ / (R<sub>in</sub> + 6 kΩ): about 13.8, or 22.8 dB, with the 20 kΩ input resistors |
+| 🔋 | 3–5 V single supply (2.5–5.5 V in the electrical table, 5.5 V absolute maximum); 4 mA idle, 0.1 µA off |
+| 🛡️ | Over-current and over-temperature protection (150 °C, 20 °C hysteresis); pop suppression at power-up and power-down |
 | 📦 | eSOP8, with an exposed pad underneath |
 
-A distributor lists it as a replacement for the ANT8815S, so that part's documentation is a useful cross-reference.
+A distributor lists the ANT8817 as a replacement for the ANT8815S; that listing is for the part without the S, so treat it as a loose cross-reference only.
 
 ### Pins
 
 With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left** 🔎 photo. Standard SOP numbering applies: bottom row 1 to 4 left to right, top row 5 to 8 right to left.
 
-| Pin | Finding | Status |
-|---|---|---|
-| 7 | `VCC_PVDD` | ✅ continuity |
-| 1–4 | Face the input network (C8, C11, C19, R22, R23, R24, R25); the matched pairs C11/C19 and R23/R25 fit the differential input | 🔎 |
-| 5, 6, 8 | Face L1 and the output side; the boost switch and the outputs are likely here | 🔎 |
-| Exposed pad | Probably the main ground | 🔎 |
+The datasheet draws the top view with pins 1 to 4 down the left side; turned so the dot is bottom-left, as on this board, the top row reads 8, 7, 6, 5 from left to right.
 
-Two measurements disagree with the layout: tests 9 and 10 traced FB1 and FB2 to bottom pins 1 and 2, and bottom pin 2 also to one end of R22. The layout suggests the outputs are on the top row. A likely cause is that the speaker was still plugged in, joining both outputs through its 4 Ω coil. Re-measure with `P2` empty before relying on either. 🔍
+| Pin | Datasheet | On this board | Status |
+|---|---|---|---|
+| 1 | `VDD`, supply input | Faces C8 and the input network | 🔎 |
+| 2 | `CTRL`, shutdown and mode | Beeps to one end of R22 ([test 10](#continuity-tests)), which fits a `CTRL` divider | 🔎 |
+| 3, 4 | `INN`, `INP`, audio inputs | Face R23/R25 and C11/C19 | 🔎 |
+| 5, 6 | `VON`, `VOP`, speaker outputs | Top row, right: the output side | 🔎 |
+| 7 | `PVDD`, boost output | `VCC_PVDD`, top row second from left, where the datasheet puts pin 7 | ✅ continuity |
+| 8 | `SW`, boost switch node | Top-left, beside L1 | 🔎 |
+| 9 (exposed pad) | `PGND`, power ground | Underneath | 🔎 |
+
+`PVDD` is the boost output, and its voltage follows the music. Never take power from `VCC_PVDD`.
+
+Test 9 disagrees with the datasheet: it traced FB1 and FB2 to bottom pins 1 and 2, which are `VDD` and `CTRL`, while the outputs are pins 5 and 6 on the top row. Test 10, pin 2 to R22, fits the datasheet. The speaker being plugged in was suggested as the cause, but tests 5 and 7 found no beep between the two legs, which argues against it. Re-measure test 9 with `P2` empty before relying on it. 🔍
 
 ### Output
 

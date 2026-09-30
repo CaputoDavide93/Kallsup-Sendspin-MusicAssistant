@@ -52,7 +52,8 @@ Rings on the photos: green, solder here; amber, measure first; red, keep off; bl
 | Point | Speaker off | Speaker on |
 |---|---|---|
 | `VCC_BAT` | | |
-| End of `R21` away from `U1` | | |
+| Either end of `R21` (🔎 on the amplifier's boost switch node: at DC it reads the amplifier's supply) | | |
+| The `+` end of EC1 and of EC2 (🔎 one is the amplifier's battery input; the other is `PVDD`, which beeps to `VCC_PVDD` unpowered: never use that one) | | |
 | Other test pads or capacitor ends near the power circuit | | |
 
 The point to use reads battery voltage (about 3.6–4.2 V) when on and about 0 V when off. `VCC_BAT` probably reads the cell in both states; do not use it, or the ESP32 drains the battery while the speaker looks off.

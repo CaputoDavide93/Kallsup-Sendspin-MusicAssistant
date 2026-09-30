@@ -15,10 +15,10 @@ The ESP32-S3 has no analogue output, so a DAC turns its I2S into line-level audi
 
 What it needs first:
 
-1. **Find the input pins.** With the board unpowered and `P2` empty, probe the inner pads of C11, C19, R23 and R25 against pins 1 to 4. The datasheet says the input is differential, and the two matched pairs fit that.
+1. **Find the input pins.** The datasheet puts the inputs on pins 3 (`INN`) and 4 (`INP`), each through 0.22 µF and 20 kΩ; C11/C19 and R23/R25 fit that. With the board unpowered and `P2` empty, confirm which pad of R23 and R25 goes to pins 3 and 4.
 2. **Inject through the existing coupling capacitor.** A series resistor from the PCM5102's left output to the amplifier-side pad of R23 or R25; leave the other input as it is.
-3. **Attenuate.** The PCM5102 puts out about 2.1 V RMS, far hotter than the JL7016C8's drive. Start at 10% volume and add a divider or cap the software volume until the ALC just starts to act.
-4. **Check CTRL.** If the amplifier mutes when the JL7016C8 idles, the ESP32 has to hold `CTRL` on, through a diode so the two do not fight, at the same voltage the JL7016C8 uses.
+3. **Attenuate.** The PCM5102 puts out about 2.1 V RMS, and the amplifier's gain is 360 kΩ / (R<sub>in</sub> + 6 kΩ), about 13.8 through the 20 kΩ already there. By that formula, about 220 kΩ in series brings the gain near 1.5. Start at 10% volume and raise it until the ALC just starts to act.
+4. **Check CTRL.** Pin 2: above 2.1 V is Class D with ALC, 1.3–1.8 V is Class AB, below 0.4 V or floating is off. If the JL7016C8 pulls it low when idle, the ESP32 can hold it above 2.1 V through a diode, so the two do not fight.
 
 The only fiddly part is one wire on a 0603 pad, about 0.8 mm.
 

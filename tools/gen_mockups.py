@@ -12,23 +12,21 @@ The ESP32-S3-Zero and MAX98357A are drawn to scale from the vendors' own
 pinout images: Waveshare's (left edge with USB-C up: 5V, GND, 3V3, GP1 to GP6;
 right edge: TX, RX, GP13 to GP7) and Adafruit's (header left to right: LRC,
 BCLK, DIN, GAIN, SD, GND, Vin; speaker terminal minus on the left). The
-KALLSUP board in the second picture is not drawn: it is the teardown photo,
-embedded, so every pad is where it really is. A joint that a build-guide
-check has not settled ends in a tag, never on a guessed pad.
+KALLSUP board is laid out from the teardown photo, so its pads sit where they
+are on the real board, and each carries its silkscreen name. A joint that a
+build-guide check has not settled ends in a tag, never on a guessed pad.
 
 Each picture carries its own bench-mat background, so one file serves both
 GitHub colour schemes.
 """
 from __future__ import annotations
 
-import base64
 import pathlib
 import sys
 from xml.sax.saxutils import escape
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "assets" / "mockups"
-PHOTO = ROOT / "docs" / "assets" / "photos" / "board-back.jpg"
 SANS = "system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif"
 MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,monospace"
 MM = 13  # pixels per millimetre for the two small boards
@@ -375,18 +373,122 @@ def bench_test():
                    "and a small speaker on the MAX98357A's screw terminal.", o)
 
 
-def photo_board(x, y, w, crop):
-    """The real KALLSUP photo, cropped to the board, and a mapper from photo pixels."""
-    cx0, cy0, cx1, cy1 = crop
-    s = w / (cx1 - cx0)
-    h = (cy1 - cy0) * s
-    data = base64.b64encode(PHOTO.read_bytes()).decode()
-    img = (f'<clipPath id="board"><rect x="{x}" y="{y}" width="{w}" height="{h:.1f}" rx="14"/></clipPath>'
-           f'<g filter="url(#shadow)"><rect x="{x}" y="{y}" width="{w}" height="{h:.1f}" rx="14" fill="#fff"/></g>'
-           f'<image href="data:image/jpeg;base64,{data}" x="{x - cx0 * s:.1f}" y="{y - cy0 * s:.1f}" '
-           f'width="{1400 * s:.1f}" height="{1050 * s:.1f}" clip-path="url(#board)"/>'
-           f'<rect x="{x}" y="{y}" width="{w}" height="{h:.1f}" rx="14" fill="none" stroke="#9aa4ae" stroke-width="2"/>')
-    return img, (lambda px, py: (x + (px - cx0) * s, y + (py - cy0) * s)), h
+def kallsup_board(x, y, w):
+    """The KALLSUP E2507 board, back side, as a mockup; and a mapper to it.
+
+    Layout coordinates are in teardown-photo pixels (the board spans about
+    200..1240 by 60..850 there), so pads sit where they are on the real board.
+    Only parts and pads with a silkscreen name are labelled.
+    """
+    x0, y0, x1, y1 = 200, 60, 1240, 850
+    s = w / (x1 - x0)
+    h = (y1 - y0) * s
+
+    def P(px, py):
+        return x + (px - x0) * s, y + (py - y0) * s
+
+    def R(v):
+        return v * s
+
+    o = [f'<g filter="url(#shadow)"><rect x="{P(212, 72)[0]:.1f}" y="{P(212, 72)[1]:.1f}" '
+         f'width="{R(1018):.1f}" height="{R(708):.1f}" rx="{R(14):.1f}" fill="#1f6b3e"/></g>',
+         f'<rect x="{P(212, 72)[0]:.1f}" y="{P(212, 72)[1]:.1f}" width="{R(1018):.1f}" '
+         f'height="{R(708):.1f}" rx="{R(14):.1f}" fill="none" stroke="#134a2a" stroke-width="2"/>']
+    silk = "#e8efe9"
+
+    def label(px, py, t, *, size=11, anchor="middle", weight="600", up=False):
+        tx, ty = P(px, py)
+        t = text(tx, ty, t, size=size, colour=silk, font=MONO, weight=weight, anchor=anchor)
+        o.append(f'<g transform="rotate(-90 {tx:.1f} {ty:.1f})">{t}</g>' if up else t)
+
+    def pad(px, py, r=17, ring=True):
+        cx, cy = P(px, py)
+        if ring:
+            o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{R(r + 9):.1f}" fill="none" '
+                     f'stroke="{silk}" stroke-width="1.5" opacity=".8"/>')
+        o.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="{R(r):.1f}" fill="url(#tin)" '
+                 f'stroke="#7d868f" stroke-width="1"/>')
+
+    def part(px, py, pw, ph, fill="#1b1d21", rx=3):
+        cx, cy = P(px, py)
+        o.append(f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{R(pw):.1f}" height="{R(ph):.1f}" '
+                 f'rx="{rx}" fill="{fill}" stroke="#0b0c0e" stroke-width=".8"/>')
+
+    def jst(px, py, pw, ph, pins):
+        cx, cy = P(px, py)
+        o.append(f'<g filter="url(#shadow)"><rect x="{cx:.1f}" y="{cy:.1f}" width="{R(pw):.1f}" '
+                 f'height="{R(ph):.1f}" rx="4" fill="#f1ede4" stroke="#b9b2a3" stroke-width="1.2"/></g>')
+        for i in range(pins):
+            ix = cx + R(pw) * (i + .5) / pins
+            o.append(f'<rect x="{ix - R(9):.1f}" y="{cy + R(ph) * .3:.1f}" width="{R(18):.1f}" '
+                     f'height="{R(ph) * .4:.1f}" rx="2" fill="#c9c2b2"/>')
+
+    def cap(px, py, r):
+        cx, cy = P(px, py)
+        o.append(f'<g filter="url(#shadow)"><circle cx="{cx:.1f}" cy="{cy:.1f}" r="{R(r):.1f}" '
+                 f'fill="url(#metal)" stroke="#8a939c" stroke-width="1.2"/></g>')
+        o.append(f'<path d="M{cx - R(r) * .6:.1f},{cy - R(r) * .8:.1f} A{R(r):.1f},{R(r):.1f} 0 0 0 '
+                 f'{cx - R(r) * .6:.1f},{cy + R(r) * .8:.1f}" fill="none" stroke="#2b2f35" '
+                 f'stroke-width="{R(r) * .28:.1f}" opacity=".85"/>')
+        o.append(text(cx + R(r) * .1, cy - 2, "470", size=11, colour="#374151", font=MONO,
+                      weight="700", anchor="middle"))
+        o.append(text(cx + R(r) * .1, cy + 11, "10V", size=10, colour="#374151", font=MONO,
+                      anchor="middle"))
+
+    # Speaker connector and its test pads, top left.
+    jst(215, 30, 225, 120, 2)
+    label(462, 128, "P2")
+    for px, py, t in ((272, 212, "Speaker -1"), (405, 215, "Speaker +1")):
+        pad(px, py, 15)
+        label(px, py + 52, t, size=10)
+    part(290, 290, 36, 64)
+    part(345, 290, 36, 64)
+    label(318, 382, "FB2  FB1", size=10)
+    # The two button pads.
+    for px, py, t in ((530, 152, "S1"), (1115, 172, "S2")):
+        pad(px, py, 16)
+        label(px + 46, py + 5, t, size=12)
+    # The label area and the board marking.
+    cx, cy = P(470, 240)
+    o.append(f'<rect x="{cx:.1f}" y="{cy:.1f}" width="{R(128):.1f}" height="{R(120):.1f}" '
+             f'fill="#dfe6e0" opacity=".9"/>')
+    label(790, 330, "E324220 JS", size=10, weight="500")
+    # Bulk capacitors.
+    cap(300, 560, 92)
+    cap(468, 598, 84)
+    label(300, 680, "EC2", size=10)
+    label(400, 700, "EC1", size=10)
+    # Power pads and the USB test pads.
+    pad(690, 497, 18)
+    label(690, 455, "VCC_BAT", size=11)
+    part(730, 480, 110, 62)
+    label(785, 470, "D1", size=10)
+    for px, t in ((868, "VCC_5V"), (915, "USB_DP1"), (965, "USB_DM1"), (1012, "GND1")):
+        pad(px, 545, 15)
+        label(px + 5, 510, t, size=10, anchor="start", up=True)
+    pad(680, 628, 14)
+    label(680, 600, "BAT_NTC", size=9)
+    pad(602, 690, 14)
+    label(602, 660, "VBAT+", size=9)
+    # Small power parts.
+    for px, py, pw, ph in ((745, 582, 60, 42), (900, 595, 60, 42), (915, 668, 60, 42), (990, 660, 36, 56)):
+        part(px, py, pw, ph)
+    label(940, 735, "Q1 Q2 ZD1", size=9, weight="500")
+    # Antenna feed pad and keep-out.
+    pad(1072, 428, 22)
+    label(1072, 490, "RF", size=10)
+    ax, ay = P(1150, 380)
+    o.append(f'<rect x="{ax:.1f}" y="{ay:.1f}" width="{R(60):.1f}" height="{R(380):.1f}" '
+             f'fill="none" stroke="{silk}" stroke-width="1.2" opacity=".6"/>')
+    # Battery connector with its leads, and the USB-C port with its cover.
+    jst(395, 720, 180, 115, 3)
+    label(385, 770, "P1", anchor="end")
+    ux, uy = P(640, 650)
+    o.append(f'<g filter="url(#shadow)"><rect x="{ux:.1f}" y="{uy:.1f}" width="{R(220):.1f}" '
+             f'height="{R(200):.1f}" rx="{R(24):.1f}" fill="#1b1d21"/></g>')
+    o.append(text(ux + R(110), uy + R(120), "USB-C", size=11, colour="#9ca3af", font=MONO,
+                  anchor="middle"))
+    return "".join(o), P, h
 
 
 def tag(x, y, lines, colour):
@@ -402,9 +504,9 @@ def tag(x, y, lines, colour):
 
 
 def inside_kallsup():
-    w, h = 1400, 1080
-    esp, amp = Esp32(560, 150), Max98357(1000, 154)
-    img, P, ph = photo_board(40, 560, 620, (200, 60, 1240, 850))
+    w, h = 1560, 1320
+    esp, amp = Esp32(800, 150), Max98357(1240, 154)
+    board, P, bh = kallsup_board(40, 660, 720)
     lanes = [505, 535, 565]
     gnd1 = P(1012, 545)
     s1, s2, p2 = P(530, 152), P(1115, 172), P(320, 118)
@@ -412,52 +514,53 @@ def inside_kallsup():
     amp_end = amp.y + amp.H + 8 * MM
     g5, gg, g1 = esp.pin("5V")[0], esp.pin("GND")[0], esp.pin("1")[0]
     mg, mv = amp.pin("GND")[0], amp.pin("Vin")[0]
-    junction = (760, 985)
-    btn_tag = (700, 640)
+    sw_tag, btn_tag = (300, 572), (900, 640)
+    bottom = 660 + bh + 40
     o = [text(40, 58, "Inside the KALLSUP", size=24, weight="700"),
          text(40, 84, "The same five wires as the bench test, now powered from the KALLSUP board.",
               size=14, colour=SUB),
-         img]
+         board]
     o += i2s(esp, amp, lanes)
-    # Ground: GND1 on the real board, to both GND pins.
-    o.append(wire(rounded([gnd1, (gnd1[0], 610), (gg, 610), (gg, esp_end)]), "black"))
-    o.append(wire(rounded([gnd1, (gnd1[0], 905), (mg, 905), (mg, amp_end)]), "black"))
-    # Switched battery: wherever check 1 finds it, so the two wires end at a tag.
-    o.append(wire(rounded([junction, (500, junction[1]), (500, 590), (g5, 590), (g5, esp_end)]), "red"))
-    o.append(wire(rounded([junction, (mv, junction[1]), (mv, amp_end)]), "red"))
+    # Switched battery: wherever check 1 finds it, so both red wires end at its tag.
+    o.append(wire(rounded([(sw_tag[0] + 250, sw_tag[1] + 28), (g5, sw_tag[1] + 28), (g5, esp_end)]), "red"))
+    o.append(wire(rounded([(sw_tag[0], sw_tag[1] + 28), (22, sw_tag[1] + 28), (22, bottom),
+                           (mv, bottom), (mv, amp_end)]), "red"))
+    # Ground: from GND1 over the board to the ESP32, and along it to the amplifier.
+    o.append(wire(rounded([gnd1, (gnd1[0], 620), (gg, 620), (gg, esp_end)]), "black"))
+    o.append(wire(rounded([gnd1, (gnd1[0], gnd1[1] + 1), (mg, gnd1[1] + 1), (mg, amp_end)]), "black"))
     # Button: S1 or S2, whichever check 3 finds.
-    o.append(wire(rounded([(g1, esp_end), (g1, btn_tag[1] + 28), (btn_tag[0], btn_tag[1] + 28)]), "yellow"))
-    o.append(blob(*gnd1, 11))
+    o.append(wire(rounded([(g1, esp_end), (g1, btn_tag[1])]), "yellow"))
+    o.append(blob(*gnd1, 10))
     o.append(esp.svg())
     o.append(amp.svg())
     for n in ("5V", "GND", "1", "2", "3", "4"):
         o.append(dupont(esp.pin(n)[0], esp.y + esp.H))
     for n in ("LRC", "BCLK", "DIN", "GND", "Vin"):
         o.append(dupont(amp.pin(n)[0], amp.y + amp.H))
-    spk = (1318, 300)
-    o.append(speaker(*spk, 64))
+    spk = (1478, 76)
+    o.append(speaker(*spk, 52))
     (mx, my), (px, py) = amp.screw("-"), amp.screw("+")
-    black = rounded([(spk[0] + 22, spk[1] - 60), (spk[0] + 22, 64), (mx, 64), (mx, my)], r=26)
-    red = rounded([(spk[0] - 18, spk[1] - 62), (spk[0] - 18, 96), (px, 96), (px, py)], r=26)
-    o += [wire(black, "black", 6), wire(red, "red", 6), blob(mx, my, 7), blob(px, py, 7)]
+    o += [wire(rounded([(spk[0] - 40, spk[1] + 20), (mx, spk[1] + 20), (mx, my)], r=24), "black", 6),
+          wire(rounded([(spk[0] - 30, spk[1] + 36), (spk[0] - 30, spk[1] + 60), (px, spk[1] + 60), (px, py)], r=18), "red", 6),
+          blob(mx, my, 7), blob(px, py, 7)]
     t, tw, th = tag(*btn_tag, ["Button pad: S1 or S2", "whichever check 3 finds"], "yellow")
     o.append(t)
     for target in (s1, s2):
-        o.append(f'<path d="M{btn_tag[0]:.1f},{btn_tag[1] + 12:.1f} L{target[0]:.1f},{target[1]:.1f}" '
+        o.append(f'<path d="M{btn_tag[0]:.1f},{btn_tag[1] + 30:.1f} L{target[0]:.1f},{target[1]:.1f}" '
                  f'stroke="{WIRE["yellow"][0]}" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>')
-        o.append(f'<circle cx="{target[0]:.1f}" cy="{target[1]:.1f}" r="13" fill="none" '
+        o.append(f'<circle cx="{target[0]:.1f}" cy="{target[1]:.1f}" r="16" fill="none" '
                  f'stroke="{WIRE["yellow"][0]}" stroke-width="3.5"/>')
-    t, tw, th = tag(junction[0] + 10, junction[1] - 32, ["Switched battery point", "found by check 1, on this board"], "red")
+    t, tw, th = tag(*sw_tag, ["Switched battery point", "on this board, found by check 1"], "red")
     o.append(t)
-    o.append(f'<circle cx="{p2[0]:.1f}" cy="{p2[1]:.1f}" r="34" fill="none" stroke="#2f6fe0" stroke-width="3.5"/>')
-    o.append(pill(p2[0] + 150, p2[1] + 70, "P2: leave empty", "blue"))
-    o.append(pill(gnd1[0] + 4, gnd1[1] + 40, "GND1", "black"))
-    o += [pill(870, lanes[0], "GP4 → LRC", "purple"), pill(900, lanes[1], "GP3 → BCLK", "blue"),
-          pill(930, lanes[2], "GP2 → DIN", "green")]
+    o.append(f'<circle cx="{p2[0]:.1f}" cy="{p2[1]:.1f}" r="44" fill="none" stroke="#2f6fe0" stroke-width="3.5"/>')
+    o.append(pill(p2[0] + 20, p2[1] - 88, "P2: leave empty", "blue"))
+    o.append(pill(gnd1[0] - 50, gnd1[1] + 38, "GND1", "black"))
+    o += [pill(1120, lanes[0], "GP4 → LRC", "purple"), pill(1150, lanes[1], "GP3 → BCLK", "blue"),
+          pill(1180, lanes[2], "GP2 → DIN", "green")]
     o += [caption(esp.x, esp.y - 50, "ESP32-S3-Zero", "top view, USB-C to the left"),
           caption(amp.x, amp.y - 18, "MAX98357A"),
-          caption(1262, 392, "Stock speaker", "moved off P2"),
-          caption(40, 545, "KALLSUP board, back (the real photo)")]
+          caption(spk[0] - 150, 40, "Stock speaker", "moved off P2"),
+          caption(800, 1140, "KALLSUP board, back", "pads named as on its silkscreen")]
     steps = [("1", "Speaker", "off P2, red to +, black to −"),
              ("2", "GND1", "to the ESP32 GND and the MAX98357A GND"),
              ("3", "Switched point", "to the ESP32 5V and the MAX98357A Vin"),
@@ -469,12 +572,12 @@ def inside_kallsup():
         o.append(text(58, yy, n, size=14, colour="#ffffff", weight="700", anchor="middle"))
         o.append(text(84, yy - 4, head, size=15, weight="700"))
         o.append(text(84, yy + 15, rest, size=13, colour=SUB))
-    o.append(text(40, 470, "Do checks 1 and 3 before soldering the joints that depend on them.",
+    o.append(text(40, 480, "Do checks 1 and 3 before soldering the joints that depend on them.",
                   size=13, colour=WIRE["red"][1], weight="600"))
-    o.append(text(40, h - 24, "Illustration over the real board photo. The two tagged joints are not "
-                  "drawn on a pad because the checks decide where they go.", size=12, colour=SUB))
-    return svg_doc(w, h, "Mockup of the build inside the KALLSUP: over the real photo of the board's "
-                   "back, GND1 is wired to the ESP32 GND and the MAX98357A GND; the ESP32 5V and the "
+    o.append(text(40, h - 24, "Illustration. The two tagged joints are not drawn on a pad because "
+                  "the checks decide where they go.", size=12, colour=SUB))
+    return svg_doc(w, h, "Mockup of the build inside the KALLSUP: on the back of the KALLSUP board, "
+                   "GND1 is wired to the ESP32 GND and the MAX98357A GND; the ESP32 5V and the "
                    "MAX98357A Vin go to the switched battery point that check 1 finds; GP1 goes to "
                    "S1 or S2, whichever check 3 finds; GP2, 3 and 4 go to DIN, BCLK and LRC; the stock "
                    "speaker moves from P2 to the MAX98357A terminal.", o)

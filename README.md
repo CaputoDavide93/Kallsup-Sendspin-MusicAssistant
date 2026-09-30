@@ -54,11 +54,11 @@ Deeper: [Wiring](docs/wiring.md) · [Board notes](docs/board-notes.md).
 | | Part | Why | Approx. cost |
 |---|---|---|---|
 | 🧠 | [Waveshare ESP32-S3-Zero](https://www.waveshare.com/wiki/ESP32-S3-Zero) | The 2 MB of PSRAM is what makes Sendspin fit | £6 |
-| 🔈 | [Adafruit MAX98357A](https://www.adafruit.com/product/3006) | I2S in, speaker out; runs straight off a Li-ion cell | £6 |
-| ⚡ | TPS63020 3.3 V buck-boost module, *optional* | Keeps the ESP32 stable below about 3.7 V of battery | £4–9 |
+| 🔈 | [Adafruit MAX98357A](https://www.adafruit.com/product/3006) | I2S in, speaker out; runs straight off a Li-ion cell, about 1.7 W at 3.7 V | £6 |
+| ⚡ | 5 V boost module, *optional* | Keeps the ESP32 in specification to the end of the charge | £2–5 |
 | 🧵 | Thin silicone wire, heat-shrink, Kapton tape | Wiring and insulation inside the case | — |
 
-The ESP32's own regulator accepts 3.7–6 V on its 5V pin, so on a full battery it runs without the TPS63020. Add the module if it resets as the battery drains. An LM2596 or other step-down-only module does not work here: it needs its input well above its output, and a Li-ion cell never is. More in [Hardware](docs/hardware.md).
+Waveshare rates the ESP32's `5V` pin at 3.7–6 V; from the cell, its regulator keeps 3.3 V down to about 3.4–3.5 V (calculated), which is most of the charge. For the rest, add a 5 V boost module on the `5V` pin. An LM2596 or other step-down-only module does not work here: it needs its input well above its output, and a Li-ion cell never is. The amplifier's 3 W rating is at 5 V; from the cell it makes about 1.7 W, less than the stock amplifier's boosted 3.5 W, so the converted speaker is quieter. More in [Hardware](docs/hardware.md).
 
 ---
 
@@ -67,13 +67,13 @@ The ESP32's own regulator accepts 3.7–6 V on its 5V pin, so on a full battery 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/wiring-dark.svg">
   <img src="docs/assets/wiring-light.svg" width="100%"
-       alt="Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
+       alt="Switched battery feeds the MAX98357A Vin and the ESP32 5V pin, directly or through an optional 5 V boost module. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.">
 </picture>
 
 | From | To | Note |
 |---|---|---|
 | 🔍 Switched battery pad | MAX98357A `Vin` | Accepts 2.5–5.5 V, so no regulator |
-| 🔍 Switched battery pad | ESP32 `5V`, **or** TPS63020 `VIN` → `OUT` → ESP32 `3V3` | Never feed both `5V` and `3V3` |
+| 🔍 Switched battery pad | ESP32 `5V`, directly **or** through a 5 V boost module | Never plug the ESP32's USB-C in once it is wired to the cell |
 | `GND1` | Every `GND` | One ground point |
 | 🔍 Second-button pad | ESP32 `GPIO1` | After measuring it |
 | ESP32 `GPIO2` / `GPIO3` / `GPIO4` | MAX98357A `DIN` / `BCLK` / `LRC` | Pins set by the SendspinZero Speaker firmware |
@@ -142,7 +142,8 @@ Kallsup-Sendspin-MusicAssistant/
 │   ├── kallsup-sendspin.yaml   # 📟 ESPHome config: SendspinZero Speaker + KALLSUP button
 │   └── secrets.yaml.example
 ├── docs/                       # 📚 build guide, wiring, board notes (index: docs/README.md)
-│   └── assets/                 # 🖼️ diagrams, build mockups, teardown photos, annotated copies
+│   ├── assets/                 # 🖼️ diagrams, build mockups, teardown photos, annotated copies
+│   └── archive/                # 🗄️ dated records, such as the design review
 ├── brand/                      # 🎨 icon.svg, drawn by tools/gen_brand.py
 ├── tools/
 │   ├── gen_diagram.py          # 🤖 draws docs/assets diagrams; --check in CI
@@ -182,7 +183,7 @@ CI runs all four on pushes to `main`, on pull requests and weekly. They prove th
 
 ## 🛠️ Troubleshooting
 
-The two most likely: the ESP32 resetting as the battery runs down (add the TPS63020), and the speaker switching itself off on battery 🔍, if the stock board has an idle timer (check 2). Both, and the rest, in [Troubleshooting](docs/troubleshooting.md).
+The two most likely: the ESP32 misbehaving as the battery runs down (add a 5 V boost module), and the speaker switching itself off on battery 🔍, if the stock board has an idle timer (check 2). Both, and the rest, in [Troubleshooting](docs/troubleshooting.md).
 
 ---
 

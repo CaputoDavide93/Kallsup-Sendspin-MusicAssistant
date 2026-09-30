@@ -43,6 +43,13 @@ All notable changes to this project are recorded here. The format follows
   `VCC_PVDD`, R21 is probably the boost snubber, and test 9 disagrees with it.
   Check 1 and route A follow.
 
+- **Power design, after an outside review.** The optional ESP32 regulator is now a
+  5 V module on the `5V` pad; feeding `3V3` is documented as outside the
+  on-board regulator's specification. Calculated supply limits, the amplifier's
+  real output from the cell (about 1.7 W, quieter than stock), a speaker-off
+  reading for the button pad, and charging-while-playing and loud-passage
+  battery runs. Record in `docs/archive/2026/2026-09-30-design-review.md`.
+
 ### Security
 - **Pinned startup chime.** The package fetches its chime from another
   repository's `main` branch; `firmware/kallsup-sendspin.yaml` now pins it to

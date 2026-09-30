@@ -6,7 +6,7 @@ This build gives up Bluetooth to keep the soldering simple. These are the routes
 |---|---|---|---|---|
 | **A. PCM5102 into the stock amplifier** | Bluetooth, battery, buttons, stock amplifier | Nothing | 3, one of them a small 0603 pad | PCM5102 DAC, a resistor and a capacitor |
 | **B. Relays switch the speaker** | Bluetooth, battery, buttons | Playing both at once | 2 large pads plus the speaker pads | Two 3 V relays, cables |
-| **C. This repository** | Battery, charging, buttons | Bluetooth | 3 (2 large test pads, plus the switched point from check 1 🔍) | Optional TPS63020 |
+| **C. This repository** | Battery, charging, buttons | Bluetooth | 3 (2 large test pads, plus the switched point from check 1 🔍) | Optional 5 V boost module |
 | **D. USB-powered only** | Case and speaker | Bluetooth, battery playback | 2 large pads (`VCC_5V`, `GND1`) | None |
 
 ## A. PCM5102 into the stock amplifier

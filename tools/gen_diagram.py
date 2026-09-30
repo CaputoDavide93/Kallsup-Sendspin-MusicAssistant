@@ -247,7 +247,7 @@ def architecture(scheme):
     k.add(
         k.box(xs[0], top, W, H, "Music Assistant", ["Sendspin server,", "one player per speaker"], icon="house"),
         k.box(xs[1], top, W, H, "ESP32-S3-Zero", ["SendspinZero Speaker", "firmware, button"], icon="chip", tone="accent"),
-        k.box(xs[2], top, W, H, "MAX98357A", ["3 W class D amp,", "runs off the battery"], icon="wave"),
+        k.box(xs[2], top, W, H, "MAX98357A", ["Class D, about 1.7 W", "from the battery"], icon="wave"),
         k.box(xs[3], top, W, H, "Speaker", ["Stock 4 Ω 3 W,", "moved off P2"], icon="speaker"),
         k.edge([(xs[0] + W + 8, mid), (xs[1] - 8, mid)], label="Wi-Fi"),
         k.edge([(xs[1] + W + 8, mid), (xs[2] - 8, mid)], label="I2S"),
@@ -266,24 +266,24 @@ def architecture(scheme):
 
 def wiring(scheme):
     k = Canvas(1180, 480, scheme,
-               "Switched battery feeds the MAX98357A Vin and the ESP32, either on its 5V pin "
-               "or through a TPS63020 on its 3V3 pin. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry "
+               "Switched battery feeds the MAX98357A Vin and the ESP32 5V pin, directly or "
+               "through an optional 5 V boost module. The second-button pad goes to GPIO1. GPIO2, 3 and 4 carry "
                "I2S to DIN, BCLK and LRC. The MAX98357A drives the speaker.")
     k.add(
         k.box(24, 56, 300, 120, "KALLSUP pads",
               ["Switched battery (measure first)", "GND1", "Second-button pad (measure first)"],
               icon="battery", tone="soft"),
-        k.box(440, 56, 280, 96, "TPS63020, optional",
-              ["Holds 3.3 V as the battery drains.", "Without it: battery to the 5V pin"], icon="bolt"),
+        k.box(440, 56, 280, 96, "5 V boost, optional",
+              ["Holds 5V to the end of the charge.", "Without it: battery to the 5V pin"], icon="bolt"),
         k.box(440, 236, 280, 120, "ESP32-S3-Zero",
-              ["3V3 (or 5V), GND", "GPIO1: button", "GPIO2, 3, 4: I2S"], icon="chip", tone="accent"),
+              ["5V, GND", "GPIO1: button", "GPIO2, 3, 4: I2S"], icon="chip", tone="accent"),
         k.box(856, 236, 300, 120, "MAX98357A",
               ["Vin, GND", "DIN, BCLK, LRC", "SD and GAIN left open"], icon="wave"),
         k.box(856, 56, 300, 96, "Speaker",
               ["Stock 4 Ω 3 W, off P2", "red to +, black to −"], icon="speaker"),
         k.edge([(332, 100), (432, 100)], label="VIN"),
         k.edge([(580, 160), (580, 228)]),
-        chip(k, 592, 198, "OUT to 3V3"),
+        chip(k, 592, 198, "OUT to 5V"),
         k.edge([(332, 152), (380, 152), (380, 290), (432, 290)]),
         chip(k, 336, 278, "GPIO1"),
         k.edge([(728, 296), (848, 296)], label="GPIO2, 3, 4"),

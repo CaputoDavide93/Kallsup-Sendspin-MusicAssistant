@@ -30,8 +30,8 @@ Bluetooth is given up on purpose. Keeping it means feeding audio into the stock 
 |---|---|---|
 | 📟 | **Firmware** (`firmware/`) | ESPHome config: SendspinZero Speaker as a pinned remote package, plus an encrypted API, OTA locked to the same key, Wi-Fi and a fallback-hotspot password from secrets, and the KALLSUP's second button as play/pause, next and previous |
 | 🔌 | **Wiring** (`docs/wiring.md`) | Every connection, pad by pad, with the reason for each |
-| 🔬 | **Board notes** (`docs/board-notes.md`) | What is on the KALLSUP board: the JL7016C8 Bluetooth SoC, the ANT8817S amplifier and a summary of its datasheet, test pads, and which findings are measured versus inferred |
-| 🧭 | **Build guide** (`docs/build-guide.md`) | Bench test, the three multimeter checks, then soldering, first power-up and assembly |
+| 🔬 | **Board notes** (`docs/board-notes.md`) | What is on the KALLSUP board: the JL7016C8 Bluetooth SoC, the ANT8817S amplifier and a summary of its datasheet, test pads, the continuity test log, and which findings are measured versus inferred |
+| 🧭 | **Build guide** (`docs/build-guide.md`) | Bench test, the three multimeter checks, then soldering, first power-up, battery runs and assembly |
 
 ---
 
@@ -124,7 +124,7 @@ Loudness: the MAX98357A's `GAIN` pin is left open. SendspinZero documents `GAIN`
 | | Part | Finding |
 |---|---|---|
 | 📡 | **U2, JL7016C8** | JieLi Bluetooth audio SoC, 24 MHz crystal |
-| 🔈 | **U1, ANT8817S** | Anatek mono Class H amplifier with built-in boost: 3.5 W into 4 Ω at 3.7 V and 1% THD, differential input, a CTRL pin for mode and anti-clipping. Pin 1 is bottom-left with the marking upright; `VCC_PVDD` is pin 7 |
+| 🔈 | **U1, ANT8817S** | Anatek mono Class H amplifier with built-in boost: 3.5 W into 4 Ω at 3.7 V and 1% THD, differential input, a CTRL pin for mode and anti-clipping. Pin 1 is bottom-left with the marking upright (🔎 from the photo); `VCC_PVDD` is pin 7 |
 | 🔊 | **Speaker output** | Bridge-tied (🔎 from the layout): treat `Speaker -` as **not** ground. Never tie it to ground or to another amplifier |
 | 🔋 | **Power** | 3.6 V 750 mAh cell on `P1`, USB-C 5 V 1 A, test pads `VCC_BAT`, `VCC_5V`, `VCC_PVDD`, `IOVDD`, `GND1` |
 
@@ -140,10 +140,11 @@ Kallsup-Sendspin-MusicAssistant/
 │   ├── kallsup-sendspin.yaml   # 📟 ESPHome config: SendspinZero Speaker + KALLSUP button
 │   └── secrets.yaml.example
 ├── docs/                       # 📚 build guide, wiring, board notes (index: docs/README.md)
-│   └── assets/                 # 🖼️ light/dark diagrams and teardown photos
+│   └── assets/                 # 🖼️ light/dark diagrams, teardown photos, annotated copies
 ├── brand/                      # 🎨 icon, drawn by tools/gen_brand.py
 ├── tools/
 │   ├── gen_diagram.py          # 🤖 draws docs/assets diagrams; --check in CI
+│   ├── annotate_photos.py      # 🏷️ rings and labels on copies of the photos
 │   └── gen_brand.py            #    draws brand/icon.png
 ├── .github/
 │   ├── workflows/ci.yml        # ✅ ESPHome config validates, diagrams up to date

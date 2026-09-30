@@ -16,22 +16,32 @@ The build in this repository only relies on ✅ findings and the three 🔍 chec
 | 🔋 | Li-ion cell, 3.6 V 750 mAh, on 3-pin connector `P1` (battery, NTC, ground) | ✅ label; 🔎 pin order |
 | 🔌 | USB-C input, 5 V 1 A | ✅ label |
 | 🔊 | Driver marked 4 Ω 3 W, red and black leads, on 2-pin connector `P2` | ✅ |
-| 🟩 | PCB marked `P-SPB-A1-01-A` and `V2.0` on the front, `E324220 JS` on the back | ✅ |
+| 🟩 | PCB marked `P-SPB-A1-01-A` and `V2.0` on the front, `E324220 JS` and `94V-0` on the back | ✅ |
 | 🎧 | No 3.5 mm input | ✅ |
 
 ## Main parts
 
 | Ref | Part | Notes | Status |
 |---|---|---|---|
-| U2 | JieLi **JL7016C8** (second marking line `BP2V742PVD`) | Bluetooth audio SoC, 24 MHz crystal `X1` | ✅ marking |
+| U2 | JieLi **JL7016C8** (second marking line `BP2V742PVD`) | Bluetooth audio SoC | ✅ marking |
+| X1 | 24.0 MHz crystal | U2's clock | ✅ marking |
 | U1 | Anatek **ANT8817S** (second marking line `HC2611`) | Mono Class H amplifier with built-in boost, eSOP8 | ✅ marking |
 | L1 | Shielded power inductor next to U1 | The amplifier's boost inductor | 🔎 |
 | R21 | 1 Ω (`1R00`) with C9 | Probably the amplifier's supply filter | 🔎 |
+| C10, C18 | Next to the `VCC_PVDD` pad | Decoupling on the output-stage supply | 🔎 |
+| C8, C11, C19, R22, R23, R24, R25 | Next to U1 pins 1 to 4 | The input and `CTRL` network | 🔎 |
+| FB1, FB2 | Ferrite beads | FB1 in the `Speaker +` leg, FB2 in the `Speaker -` leg ([tests 4 to 7](#continuity-tests)) | ✅ continuity |
+| C23, C32, C26 | Around FB1 and FB2 | Output filter; C26 across the two legs | 🔎 |
+| R26/C22, R27/C31 | Around FB1 and FB2 | An RC snubber on each leg | 🔎 |
 | EC1, EC2 | 470 µF 10 V electrolytics | Bulk capacitance, likely on the boosted rail | 🔎 |
 | D1 | SS34 Schottky, 3 A 40 V | Power path from USB | 🔎 |
 | Q1 | `2301D`, a P-channel MOSFET | Power switching | 🔎 |
+| Q2, Q3, ZD1 | Near the power path | Power control | 🔎 |
 | R7, R8 | Next to the USB-C port | Probably the USB-C CC resistors | 🔎 |
-| LED1 | Two-colour LED | Status | ✅ |
+| TVS1 | Near the USB-C port | Surge protection | 🔎 |
+| P1 | 3-pin battery connector | Battery, NTC (`BAT_NTC`) and ground | ✅ labels; 🔎 pin order |
+| P2 | 2-pin speaker connector | Upper contact `Speaker +`, lower `Speaker -` ([tests 2 and 3](#continuity-tests)) | ✅ continuity |
+| LED1 | Two-colour LED, with R12, R15 and R17 | Status | ✅ |
 | S1, S2 | Tactile buttons, each with a test pad on the back | Which is power is 🔍 | ✅ |
 
 ## Test pads
@@ -45,9 +55,34 @@ The build in this repository only relies on ✅ findings and the three 🔍 chec
 | `BAT_NTC` | Back | Battery thermistor | 🔎 |
 | `Speaker +1`, `Speaker -1` | Back | Amplifier output, beep to the upper and lower `P2` contacts | ✅ |
 | `S1`, `S2` | Back | The two buttons | ✅ labels; behaviour 🔍 |
+| `RF` | Back | Antenna feed point | 🔎 |
 | `VCC_PVDD` | Front | Beeps to U1 pin 7; the output-stage supply | ✅ continuity; 🔎 role |
 | `IOVDD` | Front | JL7016C8 I/O supply | 🔎 |
 | `GND` | Front | Ground, by the USB-C port | 🔎 |
+
+Early notes from this teardown call the `VCC_PVDD` pad `VCC_PW00`; the silkscreen reads `VCC_PVDD`.
+
+## Continuity tests
+
+The measurements behind the ✅ continuity findings above, all on an unpowered board. Digital multimeter on continuity (beep), black probe in `COM`, red in `VΩmA`, checked by touching the probes together first; USB-C and battery unplugged for every test. Whether the speaker was plugged into `P2` during each test was not recorded.
+
+| # | Probes | Result | What it shows |
+|---|---|---|---|
+| 1 | `GND1` ↔ USB-C shell | Beep | `GND1` is ground ✅ |
+| 2 | `Speaker +1` ↔ upper `P2` contact | Beep | The upper contact is `Speaker +` ✅ |
+| 3 | `Speaker -1` ↔ lower `P2` contact | Beep | The lower contact is `Speaker -` ✅ |
+| 4 | `Speaker +1` ↔ both ends of FB1 | Beep | FB1 is in the `+` leg ✅ |
+| 5 | `Speaker +1` ↔ FB2 | No beep | FB2 is not in the `+` leg ✅ |
+| 6 | `Speaker -1` ↔ both ends of FB2 | Beep | FB2 is in the `-` leg ✅ |
+| 7 | `Speaker -1` ↔ FB1 | No beep | FB1 is not in the `-` leg ✅ |
+| 8 | `VCC_PVDD` ↔ U1 top row, second from left (pin 7) | Beep | `VCC_PVDD` is pin 7 ✅ |
+| 9 | FB1 ↔ U1 bottom pin 1; FB2 ↔ U1 bottom pin 2 | Beep (reported) | ⚠️ Disagrees with the layout; see [Pins](#pins) 🔍 |
+| 10 | U1 bottom pin 2 ↔ top end of R22 | Beep | ⚠️ See [Pins](#pins) 🔍 |
+| 11 | U1 bottom pin 2 ↔ lower end of R22 | No beep | — |
+| 12 | Either end of R22 ↔ `GND1` | A resistance, no beep | Neither end is tied straight to ground |
+| 13 | Lower end of R22 ↔ C11, C19, R23 | No beep | — |
+
+No test measured `Speaker -1` against `GND1`, so the bridge-tied output below stays 🔎.
 
 ## The ANT8817S
 
@@ -68,7 +103,7 @@ A distributor lists it as a replacement for the ANT8815S, so that part's documen
 
 ### Pins
 
-With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left** ✅ photo. Standard SOP numbering applies: bottom row 1 to 4 left to right, top row 5 to 8 right to left.
+With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left** 🔎 photo. Standard SOP numbering applies: bottom row 1 to 4 left to right, top row 5 to 8 right to left.
 
 | Pin | Finding | Status |
 |---|---|---|
@@ -77,11 +112,11 @@ With the `ANT8817S` marking upright, the pin 1 dot is **bottom-left** ✅ photo.
 | 5, 6, 8 | Face L1 and the output side; the boost switch and the outputs are likely here | 🔎 |
 | Exposed pad | Probably the main ground | 🔎 |
 
-One measurement disagrees with the layout: FB1 and FB2 were traced to bottom pins 1 and 2, and bottom pin 2 also to one end of R22. The layout suggests the outputs are on the top row. A likely cause is that the speaker was still plugged in, joining both outputs through its 4 Ω coil. Re-measure with `P2` empty before relying on either. 🔍
+Two measurements disagree with the layout: tests 9 and 10 traced FB1 and FB2 to bottom pins 1 and 2, and bottom pin 2 also to one end of R22. The layout suggests the outputs are on the top row. A likely cause is that the speaker was still plugged in, joining both outputs through its 4 Ω coil. Re-measure with `P2` empty before relying on either. 🔍
 
 ### Output
 
-`Speaker +1` goes through ferrite bead FB1 and `Speaker -1` through FB2, each with its own filter capacitors and RC snubbers (R26/C22, R27/C31), with C26 across them. The output is **bridge-tied** 🔎, from the layout: each leg has its own ferrite bead and filter. Treat `Speaker -` as not ground: never tie it to ground, and never connect another amplifier to it. Measuring that `Speaker -1` does not beep to `GND1` with `P2` empty would make this ✅.
+`Speaker +1` goes through ferrite bead FB1 and `Speaker -1` through FB2 ✅ (tests 4 to 7), each with its own filter capacitors and RC snubbers (R26/C22, R27/C31), with C26 across them. The output is **bridge-tied** 🔎, from the layout: each leg has its own ferrite bead and filter. Treat `Speaker -` as not ground: never tie it to ground, and never connect another amplifier to it. Measuring that `Speaker -1` does not beep to `GND1` with `P2` empty would make this ✅.
 
 ## Photos
 

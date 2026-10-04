@@ -121,7 +121,7 @@ Loudness: the MAX98357A's `GAIN` pin is left open. SendspinZero documents `GAIN`
 
 ---
 
-## 📖 What's on the KALLSUP board
+## 🔬 What's on the KALLSUP board
 
 | | Part | Finding |
 |---|---|---|

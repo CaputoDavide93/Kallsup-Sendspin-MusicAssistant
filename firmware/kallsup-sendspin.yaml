@@ -6,8 +6,8 @@
 # YAML can never reach this speaker without a deliberate bump of `ref`. The
 # startup chime it downloads is pinned below for the same reason. ESPHome itself
 # is not pinned: its release carries the Sendspin and audio code. This file only
-# adds what is specific to this build: its name, locked-down API/OTA/Wi-Fi, the
-# pinned chime, and the KALLSUP's second button.
+# adds what is specific to this build: its name, the ESPHome version floor,
+# locked-down API/OTA/Wi-Fi, the pinned chime, and the KALLSUP's second button.
 #
 # Pins, all set by the package except the button:
 #   GPIO2  I2S data   -> MAX98357A DIN
@@ -19,6 +19,12 @@
 substitutions:
   name: kallsup-sendspin
   friendly_name: KALLSUP Sendspin
+
+# The pinned SendspinZero package needs ESPHome 2026.8.0 or newer (it sets the
+# same min_version). Stated here too, so a `ref` bump can't quietly change the
+# floor this build and its README badge rely on.
+esphome:
+  min_version: 2026.8.0
 
 packages:
   sendspinzero_speaker:

@@ -3,7 +3,7 @@
 [`firmware/kallsup-sendspin.yaml`](../firmware/kallsup-sendspin.yaml) is an ESPHome config with two parts.
 
 - **The audio**: [SendspinZero](https://github.com/RealDeco/SendspinZero)'s `SendspinZero-Speaker.yaml`, pulled in as a remote package and pinned to a commit. It sets up I2S on `GPIO2`/`GPIO3`/`GPIO4` for a MAX98357A, the Sendspin media player, the status LED and the entities listed below.
-- **This build**: the device name, an encrypted API, OTA that requires the same key, Wi-Fi and a fallback-hotspot password from `secrets.yaml`, and the KALLSUP's second button.
+- **This build**: the device name, the ESPHome floor (`min_version: 2026.8.0`, the same as the package's), an encrypted API, OTA that requires the same key, Wi-Fi and a fallback-hotspot password from `secrets.yaml`, and the KALLSUP's second button.
 
 Nothing from SendspinZero is copied into this repository. Pinning the commit means an upstream change reaches the speaker only when `ref` is bumped on purpose. The startup chime, which the package downloads from another repository's `main` branch, is pinned to a commit in this file too. ESPHome itself is not pinned, and it carries the Sendspin and audio code, so an ESPHome release can still change how the speaker behaves; CI validates against the latest one every week.
 

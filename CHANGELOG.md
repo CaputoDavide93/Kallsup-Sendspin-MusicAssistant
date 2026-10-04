@@ -36,6 +36,9 @@ All notable changes to this project are recorded here. The format follows
   wanted.
 
 ### Changed
+- **Firmware: ESPHome floor stated.** `esphome: min_version: 2026.8.0`, the
+  same floor the pinned SendspinZero package sets, so the README badge is
+  backed by this repo's own config.
 - **ANT8817S datasheet.** Board notes now use the chip's own manual (ANT8817S
   V1.0) instead of the ANT8817's: a Class AB/D amplifier with an adaptive
   boost, not Class H. The full pinout, `CTRL` levels, gain formula and
